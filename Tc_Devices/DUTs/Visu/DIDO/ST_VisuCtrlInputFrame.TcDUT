@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_VisuCtrlInputFrame" Id="{4f6b8c78-1555-4f63-8b85-ba2372e6039a}">
+    <Declaration><![CDATA[TYPE ST_VisuCtrlInputFrame EXTENDS ST_VisuCtrlUnitFrame:
+STRUCT
+	bIn				: BOOL;								(*  *)
+	bForceIn		: BOOL;								(*  *)
+	bForceDisabled	: BOOL	:=TRUE ;					(*  *)
+	sModuleType		: STRING;							(* Module type e.g. EL1xxx *)
+	sPortID			: STRING;							(* Wire id connected to port *)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

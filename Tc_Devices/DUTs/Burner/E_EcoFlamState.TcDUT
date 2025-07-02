@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_EcoFlamState" Id="{abc98fc7-7220-4adf-9894-3eb878a63ba7}">
+    <Declaration><![CDATA[{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_EcoFlamState :
+(
+	ECOFLAM_ABORTING := -50,
+	ECOFLAM_UNINITIALIZED := 0,
+	ECOFLAM_INITIALIZING	:= 10,
+	ECOFLAM_READY_INITIALIZED := 20,
+	ECOFLAM_IGNITION	:= 30,
+	ECOFLAM_IGNITION_DONE	:= 40,
+	ECOFLAM_STOP		:= 50,
+	ECOFLAM_STOP_DONE	:= 60,
+	ECOFLAM_RESET	:= 70,
+	ECOFLAM_RESET_DONE	:= 80
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

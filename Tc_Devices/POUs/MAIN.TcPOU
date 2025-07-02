@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{d4f70c9f-7ffb-4cf7-bcb0-c8428405c866}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	analoginput : FB_AnalogInputThermocouple;
+	fbburner : FB_BurnerControlEcoFlam;
+	fbburnerw : FB_BurnerControlEcoFlamV2;	
+	fbContactor : FB_ContactorFBNO;
+	fbContactor1FB : FB_Contactor1FB_ThermalRelay;
+	fbContactornoFB : FB_ContactorNonFB_ThermalRelay;
+	fbCylinder	: FB_DoubleCoilCylinder;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

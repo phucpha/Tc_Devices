@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_DigitalOutput" Id="{e4607e00-17b3-420f-bcdb-87a21e0ebb22}" SpecialFunc="None">
+    <Declaration><![CDATA[(* 
+| :Description: This function block represents basic digital output and can be used for creating an instance of signle digital output device. 
+| To control the output state use property "Out" 
+*)
+FUNCTION_BLOCK FB_DigitalOutput EXTENDS FB_DigitalDevice IMPLEMENTS  I_DigitalOutput
+VAR
+	bOut AT %Q*: BOOL; (* Current value of output*)
+END_VAR
+(*
+Version history:
+
++-------------+------------+----------------+----------+------------------------------------------+
+|Date         | Version    | created under  | Author   | Remark                                   |
++=============+============+================+==========+==========================================+
+|2021-11      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                   |
++-------------+------------+----------------+----------+------------------------------------------+
+|2022-02      | 1.1.0.0    | V3.1.4024.22   | ADBO     | Changed to child of FB_DigitalDevice     |
++-------------+------------+----------------+----------+------------------------------------------+
+
+*)]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Properties" Id="{1939476e-a2bf-4246-8136-dc67b97f0d45}">
+      <Folder Name="Parameters" Id="{8e523254-fbee-446f-a73e-71c7994dadab}" />
+    </Folder>
+    <Property Name="Out" Id="{b94d6fa3-7701-4ced-bb03-56a2c7137ea4}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY Out : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{731e923d-a692-4e2c-bb67-9b4c39310b99}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Out := bOut;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{9b5ef51e-171f-48e0-a52d-c50ec7dd59d2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[bOut := Out;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="FB_DigitalOutput">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalOutput.Out.Get">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalOutput.Out.Set">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

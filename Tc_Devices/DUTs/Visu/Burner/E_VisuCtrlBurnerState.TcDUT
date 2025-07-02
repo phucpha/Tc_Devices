@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_VisuCtrlBurnerState" Id="{51e714a7-1f01-4e35-b3a9-f031488ae592}">
+    <Declaration><![CDATA[{attribute 'strict'}
+TYPE E_VisuCtrlBurnerState :
+(
+	VISU_CTRL_BURNER_WAIT_FOR_CMD 		:= 0,	(* *)
+	VISU_CTRL_BURNER_INIT				:= 10,	(*  *)
+	VISU_CTRL_BURNER_RESET				:= 20,	(*  *)
+	VISU_CTRL_BURNER_IGNITION			:= 30,	(*  *)
+	VISU_CTRL_BURNER_STOP				:= 40,	(*  *)
+	VISU_CTRL_BURNER_APPEND_POWER_ON	:= 50,	(*  *)	
+	VISU_CTRL_BURNER_ABORT				:= -10	(*  *)
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

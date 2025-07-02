@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_DigitalDevice" Id="{a1bca7a2-9faf-41ba-a0d4-8dcbc342f662}">
+    <Declaration><![CDATA[INTERFACE I_DigitalDevice
+]]></Declaration>
+    <Property Name="ModuleType" Id="{09c6a0e3-9023-480a-9a01-1f2baad57694}">
+      <Declaration><![CDATA[PROPERTY ModuleType : REFERENCE TO STRING]]></Declaration>
+      <Get Name="Get" Id="{ffaed5db-7b7e-4980-ab29-1610c63d0253}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="MR_FirstCycle" Id="{0e8fc61e-43d8-407c-9366-7784c8bd1bf2}">
+      <Declaration><![CDATA[METHOD MR_FirstCycle : BOOL
+VAR_INPUT
+	sName 			: STRING;
+	sModuleType 	: STRING;
+	sPortID			: STRING;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Name" Id="{4c094f65-ab1b-4bae-a36f-e76cab1cc534}">
+      <Declaration><![CDATA[PROPERTY Name : REFERENCE TO STRING]]></Declaration>
+      <Get Name="Get" Id="{54110fcc-b354-4e4b-8238-792622d7e63a}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="PortID" Id="{0799dd63-fe2b-4bab-ad04-e5e275e1422f}">
+      <Declaration><![CDATA[PROPERTY PortID : REFERENCE TO STRING]]></Declaration>
+      <Get Name="Get" Id="{e2c5f04b-7526-4711-973a-29b9d56bcf4e}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

@@ -1,0 +1,464 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_DigitalInputExt" Id="{306ccf3b-f75f-4f5a-aaf1-3bc1695862ee}" SpecialFunc="None">
+    <Declaration><![CDATA[(* 
+| :Description: This function block represents basic digital input and can be used for creating an instance of signle digital input device like buttons, switches, sensors.
+| To get the current status of digital input use "Value" property. To simulate state of the input by software set "Enable Force" parameter and change value via "MR_ResetForceValue" and "MR_SetForceValue" methods.
+*)
+FUNCTION_BLOCK FB_DigitalInputExt EXTENDS FB_DigitalInput
+VAR
+	(* Internal commands *)
+	bInit 				: BOOL;		(*  *)
+	bAbort				: BOOL;		(*  *)
+	bReset				: BOOL;		(*  *)
+	bTimeoutTracking	: BOOL;		(* Watchdog timer control bit *)
+	
+	(* Internal status *)
+	bActive				: BOOL;		(*  *)
+	bErrorTimedout		: BOOL;		(* Timeout coccured while waiting for signal *)
+	eDigitalInputState	: E_DigitalInputExState;
+	
+	(*Internal parameters*)
+	tTimeout			: TIME;		(* Input timeout *)
+	bEnableTimeout		: BOOL;		(* Enable using timeout *)
+	
+	(* Function blocks *)
+	bStartWatchdog		: BOOL;
+	tonWatchdog			: TON;		(* Input timeout watchdog *)
+	
+END_VAR
+(*
+Version history:
+
++-------------+------------+----------------+----------+------------------------------------------+
+|Date         | Version    | created under  | Author   | Remark                                   |
++=============+============+================+==========+==========================================+
+|2022-03      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                   |
++-------------+------------+----------------+----------+------------------------------------------+
+
+*)]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[bActive := eDigitalInputState >= DIGITAL_INPUT_EX_IDLE; //OR eDigitalInputState = DIGITAL_INPUT_EX_ABORTING;
+
+StateMachine();
+
+tonWatchdog( IN := bStartWatchdog, PT := tTimeout);]]></ST>
+    </Implementation>
+    <Folder Name="FirstCycle" Id="{59b9490c-7564-40d9-a364-72728a7381e1}" />
+    <Folder Name="Properties" Id="{4fb8016b-45e3-4a3d-b371-fb412110d960}">
+      <Folder Name="Parameters" Id="{ba1b78c9-38d1-4d81-ac75-ca573a6c21f8}" />
+      <Folder Name="Status" Id="{9884cd86-cd9d-4e6a-aa7c-f6b34f67e1a8}" />
+    </Folder>
+    <Folder Name="Requests" Id="{df908729-3267-471e-b430-98fdc99dbb68}" />
+    <Folder Name="StateMachine" Id="{98cf4a4b-af28-43a7-a816-5488f5ecc4bf}" />
+    <Property Name="Active" Id="{1d1a69cd-28d9-423d-bb74-e76a3e7ed21b}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY Active : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{aa7c41af-7747-4fa0-ab55-76a819e5e66e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Active REF= bActive;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="CurrentTimeout" Id="{22a807fe-3288-4153-be59-dda883612369}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY CurrentTimeout : REFERENCE TO TIME]]></Declaration>
+      <Get Name="Get" Id="{0e4ea362-8db8-4615-b141-e09995c1bf4c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CurrentTimeout REF= tonWatchdog.ET;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="EnableTimeout" Id="{c464567b-8c3a-4926-92e7-604757f82f4c}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY EnableTimeout : BOOL]]></Declaration>
+      <Get Name="Get" Id="{3208d6b6-29dc-4051-ad73-50179b7f05e9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[EnableTimeout := bEnableTimeout;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{91a99842-bfc5-4f26-9d2c-6668b9100653}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[bEnableTimeout := EnableTimeout;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ErrorTimedout" Id="{1be3e029-3bca-407c-937c-f0f88a10cbb6}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY ErrorTimedout : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{d2a095c7-8b0c-4bdf-bb76-1241bcf74fb6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ErrorTimedout REF= bErrorTimedout;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="MR_Abort" Id="{d651dbff-bcc4-40dd-8d44-714051fee34c}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Abort : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eDigitalInputState > DIGITAL_INPUT_EX_UNINITIALIZED THEN
+	bAbort := TRUE;
+	MR_Abort := FALSE;
+	eDigitalInputState := DIGITAL_INPUT_EX_ABORTING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : abort requested'));	
+	
+ELSIF eDigitalInputState = DIGITAL_INPUT_EX_UNINITIALIZED THEN
+	bAbort := FALSE;
+	MR_Abort := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : abort done'));	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_FirstCycleEx" Id="{b46e9c86-8a6c-43e2-8e5c-b65700dd99fb}" FolderPath="FirstCycle\">
+      <Declaration><![CDATA[METHOD MR_FirstCycleEx : BOOL
+VAR_INPUT
+	sName			: STRING;
+	sModuleType		: STRING;
+	sPortID			: STRING;
+	bEnableTimeout	: BOOL;
+	tDefaultTimeout : TIME;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.sName := sName;
+THIS^.ModuleType := sModuleType;
+THIS^.PortID := sPortID;
+THIS^.bEnableTimeout := bEnableTimeout;
+THIS^.tTimeout := tDefaultTimeout;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Init" Id="{249ec19e-ac72-499e-867d-a64e2e632d55}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Init : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eDigitalInputState = DIGITAL_INPUT_EX_UNINITIALIZED THEN
+	bInit := TRUE;
+	MR_Init := FALSE;
+	eDigitalInputState := DIGITAL_INPUT_EX_INITIALIZING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : initialization requested'));		
+	
+ELSIF eDigitalInputState = DIGITAL_INPUT_EX_IDLE AND bInit THEN
+	bInit := FALSE;
+	MR_Init := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : initialization done'));	
+
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Reset" Id="{371b7467-c075-42d9-9418-b309d2dc3eba}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eDigitalInputState = DIGITAL_INPUT_EX_IDLE THEN
+	bReset := TRUE;
+	MR_Reset := FALSE;
+	eDigitalInputState := DIGITAL_INPUT_EX_RESET;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : reset requested'));	
+	
+ELSIF eDigitalInputState = DIGITAL_INPUT_EX_RESET_DONE THEN
+	bReset := FALSE;
+	MR_Reset := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : reset done'));	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_StartTracking" Id="{75e4d076-6bab-4670-86b7-2ec7acfe7812}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_StartTracking
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eDigitalInputState = DIGITAL_INPUT_EX_IDLE AND bEnableTimeout AND NOT bErrorTimedout THEN
+	bTimeoutTracking := TRUE;
+	eDigitalInputState := DIGITAL_INPUT_EX_TIMEOUT_TRACKING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : start tracking requested'));	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Abort" Id="{06d43a0e-1b62-4f03-849e-b216dbee1c7d}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Abort
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[eDigitalInputState := DIGITAL_INPUT_EX_UNINITIALIZED;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Idle" Id="{c9021290-8628-4719-99cd-3a17835336c7}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Idle
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Initializing" Id="{b055f464-a013-4d48-95a1-158f75cf165e}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Initializing
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[(* To-Do add alarm declaration *)
+
+eDigitalInputState := DIGITAL_INPUT_EX_READY_INITIALIZED;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ReadyInitialized" Id="{1b61816b-0e7c-4697-9ca3-c03e6bd5d600}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ReadyInitialized
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[eDigitalInputState := DIGITAL_INPUT_EX_IDLE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Reset" Id="{f205e94c-98e3-4fb9-8a08-802b6d6f0588}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Reset
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bErrorTimedout := FALSE;
+eDigitalInputState := DIGITAL_INPUT_EX_RESET_DONE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ResetDone" Id="{715f7b19-a107-4bf8-9568-8b18f6f174b1}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bReset THEN
+	eDigitalInputState := DIGITAL_INPUT_EX_IDLE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_TimeoutTracking" Id="{0c54f001-4e07-4807-ab06-00c535c96c31}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_TimeoutTracking
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF tonWatchdog.Q THEN
+	(* To-Do raise alarm *)
+	bErrorTimedout := TRUE;
+	bStartWatchdog := FALSE;
+	eDigitalInputState := DIGITAL_INPUT_EX_TIMEOUT_TRACKING_DONE;
+	
+ELSE
+	bStartWatchdog := TRUE;
+	
+	IF bRisingTrigger OR bFallingTrigger THEN
+		bStartWatchdog := FALSE;
+		eDigitalInputState := DIGITAL_INPUT_EX_TIMEOUT_TRACKING_DONE;
+	
+	END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_TimeoutTrackingDone" Id="{11d2a47d-c948-40af-89e8-f42aed2dc73e}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_TimeoutTrackingDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bTimeoutTracking := FALSE;
+eDigitalInputState := DIGITAL_INPUT_EX_IDLE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Uninitialized" Id="{c4cd865c-a5ab-41c3-9123-fb0902cdecc1}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Uninitialized
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bInit := FALSE;
+bAbort := FALSE;
+bReset := FALSE;
+bTimeoutTracking := FALSE;
+
+bRisingTrigger := FALSE;
+bFallingTrigger := FALSE;
+bErrorTimedout := FALSE;
+
+tonWatchdog( IN := FALSE, PT := tTimeout);]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="State" Id="{f2f07911-aff7-4060-9993-1e2879f7a7de}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY State : REFERENCE TO E_DigitalInputExState]]></Declaration>
+      <Get Name="Get" Id="{2e9c72ec-1f76-49d1-a6de-5249c865d093}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[State REF= eDigitalInputState;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="StateMachine" Id="{861b9bc6-6819-49a9-b962-25af74d19c71}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED StateMachine
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eDigitalInputState OF
+	DIGITAL_INPUT_EX_UNINITIALIZED:
+		MS_Uninitialized();
+		
+	DIGITAL_INPUT_EX_INITIALIZING:
+		MS_Initializing();
+		
+	DIGITAL_INPUT_EX_READY_INITIALIZED:
+		MS_ReadyInitialized();
+		
+	DIGITAL_INPUT_EX_IDLE:
+		MS_Idle();
+		
+	DIGITAL_INPUT_EX_TIMEOUT_TRACKING:
+		MS_TimeoutTracking();	
+	
+	DIGITAL_INPUT_EX_TIMEOUT_TRACKING_DONE:
+		MS_TimeoutTrackingDone();	
+	
+	DIGITAL_INPUT_EX_RESET:
+		MS_Reset();
+
+	DIGITAL_INPUT_EX_RESET_DONE:
+		MS_ResetDone();
+	
+	DIGITAL_INPUT_EX_ABORTING:
+		MS_Abort();
+	
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Timeout" Id="{d91bde1a-1044-46b4-b6ec-d9553838fd7e}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY Timeout : TIME]]></Declaration>
+      <Get Name="Get" Id="{983c364e-6ad9-4042-8429-aaa5e8aa1a02}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Timeout := tTimeout;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{bcd9be63-53f1-4333-b660-1f59e098930c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[tTimeout := Timeout;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="FB_DigitalInputExt">
+      <LineId Id="3" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.Active.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.CurrentTimeout.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.EnableTimeout.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.EnableTimeout.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.ErrorTimedout.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MR_Abort">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MR_FirstCycleEx">
+      <LineId Id="3" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="4" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MR_Init">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MR_Reset">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MR_StartTracking">
+      <LineId Id="3" Count="4" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_Abort">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_Idle">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_Initializing">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_ReadyInitialized">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_Reset">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_ResetDone">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_TimeoutTracking">
+      <LineId Id="3" Count="12" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_TimeoutTrackingDone">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.MS_Uninitialized">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.State.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.StateMachine">
+      <LineId Id="3" Count="27" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.Timeout.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInputExt.Timeout.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

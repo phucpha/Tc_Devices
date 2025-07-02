@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_DoubleCoilCylinder" Id="{6ddd7046-44ff-430f-9a37-c3787ab4b0f5}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_DoubleCoilCylinder EXTENDS FB_SingleCoilCylinder
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	(* Coils *)
+	poHomeValve	: FB_DigitalOutput;	(* Home position valve function block *)
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bFirstCycle THEN
+	poActiveValve.MR_FirstCycle( sName := CONCAT(sName,':Home_Valve'),sModuleType := ref_poHomeValve.ModuleType, sPortID := ref_poHomeValve.PortID);	
+END_IF
+
+SUPER^();
+
+bPositionHold := poActiveValve.Out OR poHomeValve.Out;
+
+poHomeValve();]]></ST>
+    </Implementation>
+    <Folder Name="Properties" Id="{6d591a93-1ac3-4127-8656-c4d0d00eea71}">
+      <Folder Name="Status" Id="{0a4645d5-6ecd-4dd7-87fa-a3a6c5ca67c6}" />
+    </Folder>
+    <Folder Name="State Machine" Id="{80882ad3-c822-4137-b6a8-632b3adb94c8}" />
+    <Method Name="MS_GoActive" Id="{39e6c931-a0ed-46e3-ac78-81170d2ee2b7}" FolderPath="State Machine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_GoActive
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poHomeValve.Out := FALSE;
+SUPER^.MS_GoActive();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_GoHome" Id="{7f357183-2575-4a66-8bbe-ef044d67c9f4}" FolderPath="State Machine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_GoHome
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poHomeValve.Out := TRUE;
+SUPER^.MS_GoHome();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Release" Id="{147ef30d-a138-47bd-99a0-ac0c3a4e9eff}" FolderPath="State Machine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Release
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poHomeValve.Out := FALSE;
+SUPER^.MS_Release();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Reset" Id="{e7f66add-7dbe-40d5-bcac-ef912b3bf63c}" FolderPath="State Machine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Reset
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poHomeValve.Out := FALSE;
+
+SUPER^.MS_Reset();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Uninitialized" Id="{237a9e6b-0981-4b29-9f47-ffe67f4c79de}" FolderPath="State Machine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Uninitialized
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poHomeValve.Out := FALSE;
+SUPER^.MS_Uninitialized();]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="ref_poHomeValve" Id="{286cda26-cc61-4bbf-844b-0f23982e7fc8}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY ref_poHomeValve : REFERENCE TO FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{9f4cc8ab-fe19-4491-ab55-593bff0181cf}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_poHomeValve REF= poHomeValve;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_DoubleCoilCylinder">
+      <LineId Id="3" Count="7" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DoubleCoilCylinder.MS_GoActive">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DoubleCoilCylinder.MS_GoHome">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DoubleCoilCylinder.MS_Release">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DoubleCoilCylinder.MS_Reset">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DoubleCoilCylinder.MS_Uninitialized">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DoubleCoilCylinder.ref_poHomeValve.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

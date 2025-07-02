@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_ActivePower" Id="{e4d392f5-3228-42b6-907b-ce95dee03de3}">
+    <Declaration><![CDATA[INTERFACE I_ActivePower EXTENDS I_ActivePowerNoFB
+]]></Declaration>
+    <Property Name="Active" Id="{55fbb479-5223-4482-b7af-3105728ac033}">
+      <Declaration><![CDATA[PROPERTY Active : reference to bool]]></Declaration>
+      <Get Name="Get" Id="{3d521bad-d28b-4fd1-8e3f-a03de628cad5}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Busy" Id="{eacde2af-5819-4e39-ac27-2a6ec58a903b}">
+      <Declaration><![CDATA[PROPERTY Busy : REFERENCE TO bool]]></Declaration>
+      <Get Name="Get" Id="{dcaa9236-b632-4433-948b-c305fb30f045}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Error" Id="{646b5fa8-b6ab-4758-81c9-e18d4fb55467}">
+      <Declaration><![CDATA[PROPERTY Error : reference to bool]]></Declaration>
+      <Get Name="Get" Id="{735eb9f8-4253-4dcc-ab4a-989b9a1bce38}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="MR_Abort" Id="{ed366470-69bd-4395-8c06-7ee3a8ea6308}">
+      <Declaration><![CDATA[METHOD MR_Abort : bool
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Init" Id="{f3f2dbe3-7e7e-4064-8230-206aedab54a6}">
+      <Declaration><![CDATA[METHOD MR_Init : bool
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Reset" Id="{724598b8-ed33-4ba4-bb07-89d9ef6a61ec}">
+      <Declaration><![CDATA[METHOD MR_Reset : bool
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="ReasonError" Id="{54e89aaa-963a-4230-b420-ea58a55c43af}">
+      <Declaration><![CDATA[(*return value depedning on Request*)
+PROPERTY ReasonError : string]]></Declaration>
+      <Get Name="Get" Id="{22ea26c3-cc11-40f1-9ae7-6f7efa0688ea}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

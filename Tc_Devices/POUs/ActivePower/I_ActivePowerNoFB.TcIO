@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_ActivePowerNoFB" Id="{009184df-3050-4a8b-be3d-514f8a5a6646}">
+    <Declaration><![CDATA[INTERFACE I_ActivePowerNoFB
+]]></Declaration>
+    <Method Name="MR_PowerOFF" Id="{45024381-c0dd-44d7-9113-221035bb5721}">
+      <Declaration><![CDATA[METHOD MR_PowerOFF : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_PowerON" Id="{f175860c-a5fe-4d96-9cce-9a4f1e0c068d}">
+      <Declaration><![CDATA[METHOD MR_PowerON : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Powered" Id="{a5a3b93d-c3e8-423a-8bac-7927db437419}">
+      <Declaration><![CDATA[PROPERTY Powered : REFERENCE TO  bool]]></Declaration>
+      <Get Name="Get" Id="{82525a93-23a4-426d-824a-7686787330df}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

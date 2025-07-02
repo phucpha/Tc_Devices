@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="465.48001"
+   height="209.00999"
+   id="svg11769"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   version="1.0"
+   sodipodi:docbase="D:\Documents and Settings\kamarton\Desktop"
+   sodipodi:docname="Double acting cylinder (symbol,ISO1219).svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs11771" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4608576"
+     inkscape:cx="232.74001"
+     inkscape:cy="104.505"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="748"
+     inkscape:window-height="579"
+     inkscape:window-x="154"
+     inkscape:window-y="154" />
+  <metadata
+     id="metadata11774">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:date>2007-12-20 (YMD)</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Marton Kiss-Albert</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>self-made</dc:source>
+        <dc:description>ISO 1219</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/2.5/" />
+        <dc:title>Double acting cylinder (symbol)</dc:title>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/2.5/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Attribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-35.831429,-385.00004)">
+    <path
+       d="M 63.401429,412.56004 L 63.401429,540.79004"
+       id="path130"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 114.69143,412.56004 L 114.69143,540.79004"
+       id="path132"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 140.34143,412.56004 L 140.34143,540.79004"
+       id="path134"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 63.401429,540.79004 L 448.09143,540.79004"
+       id="path136"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 448.09143,540.79004 L 448.09143,489.50004"
+       id="path138"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 448.09143,463.86004 L 448.09143,412.56004"
+       id="path140"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 448.09143,412.56004 L 63.401429,412.56004"
+       id="path142"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 140.34143,489.50004 L 473.74143,489.50004"
+       id="path144"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 140.34143,463.86004 L 473.74143,463.86004"
+       id="path146"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 89.051429,540.79004 L 89.051429,566.44004"
+       id="path148"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+    <path
+       d="M 422.45143,540.79004 L 422.45143,566.44004"
+       id="path150"
+       style="fill:none;stroke:#000000;stroke-width:3.83999991;stroke-linecap:round" />
+  </g>
+</svg>

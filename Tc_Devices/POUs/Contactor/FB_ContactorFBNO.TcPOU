@@ -1,0 +1,919 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ContactorFBNO" Id="{feb7b10e-a057-45cb-8cc6-9abcfcba8d32}" SpecialFunc="None">
+    <Declaration><![CDATA[(* 
+| :Description: This function block use for Contactor active by digital output, Use NO contact feedback(Digital Input) to Check Error
+*)
+FUNCTION_BLOCK FB_ContactorFBNO IMPLEMENTS I_ActivePower
+VAR
+	piNO 		: FB_DigitalInputExt;
+	poCoil		: FB_DigitalOutput;
+	sName		: STRING;
+	(* Internal commands *)
+	bInit 				: BOOL;					(* Prepare contactor to work *)
+	bReset				: BOOL;					(* Reset function block *)
+	bAbort				: BOOL;					(* Deinitialize function block *)
+	bPowerOn			: BOOL;					(* Power On Request *)
+	bPowerOff			: BOOL;					(* Power Off Request *)
+	bSimulation			: BOOL;					(* Simulation on/off bit *)
+	(* Cylinder state *)
+	bActive				: BOOL;					(*  *)
+	bBusy				: BOOL;					(*  *)	
+	bError 				: BOOL;					(*  *)
+	bPowered			: BOOL;					(*  *)
+	eErrorID 			: E_ContactorError;		(*  *)
+	eContactorState		: E_ContactorState;		(* State machine of function block *)
+	eContactorGoHomeState : E_ContactorStateGo;
+	eContactorGoActiveState : E_ContactorStateGo;
+	sReasonError		: STRING;
+	(* Timers *)
+	tonPowerOnDelay		: TON;					(* Timer ON delay when Power ON Request *)
+	tonPowerOffDelay	: TON;					(* Timer OFF delay when Power ON Request *)
+	tonMeasurementTimer	: TON;					(* Measurement of movement time *)
+	tonContactorWatchdog: TON;					(* Movement watchdog *)
+	tonGeneral 			: TON;
+	
+	(* Time parameters *)
+	tDelay				: TIME := T#100MS;		(* Delay time when moving to any position *)
+	tMeasurement		: TIME := T#60S;		(* Time of movement measurement *)
+	tPowerOn			: TIME;					(* Time of last movement to active postion *)
+
+	
+END_VAR
+(*
+Version history:
+
++-------------+------------+----------------+-------------------------------+------------------------------------------+
+|Date         | Version    | created under  | Author   						| Remark                                   |
++=============+============+================+===============================+==========================================+
+|2025-06      | 1.0.0.0    | V3.1.4024.56   | https://github.com/phucpha    | Function block created                   |
++-------------+------------+----------------+-------------------------------+------------------------------------------+
+
+*)]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Simulation enabled*)
+IF bSimulation THEN
+	piNO.EnableForce := TRUE;
+	M_SimulationLogic();
+ELSE
+	piNO.MR_ResetForceValue();
+	piNO.EnableForce := FALSE;
+END_IF
+
+(* Time  measurement - to active position *)
+IF piNO.RisingTrigger 
+	AND eContactorState = CONTACTOR_POWER_ON
+THEN
+	tPowerOn := tonMeasurementTimer.ET;
+END_IF
+
+(*  *)
+tonMeasurementTimer(
+	IN := tonContactorWatchdog.IN,
+	PT := tMeasurement
+);
+						
+StateMachine();
+
+(* Update status flags *)
+bActive := eContactorState >= CONTACTOR_IDLE 
+			OR econtactorState = CONTACTOR_ABORTING ;
+
+bError := piNO.ErrorTimedout;
+
+(* Error handling *)
+IF piNO.ErrorTimedout THEN
+	eErrorID := CONTACTOR_ERROR_POWER_ON_TIMED_OUT;
+	fbMachineLogger.MR_AddLogs(
+		FUN_MergeStrings5(
+			sName,
+			' : Error occured (error ID: ',
+			'Power On timed out', ')',
+			''
+		)
+	);
+ELSE
+	eErrorID := CONTACTOR_ERROR_OK;
+END_IF
+
+(* Position flag update *)
+bPowered := piNO.In;
+
+(* Run sensors instances *)
+piNO();
+poCoil();]]></ST>
+    </Implementation>
+    <Folder Name="Internal" Id="{a8c7e34e-f63c-45f1-bfbb-81faebd2d854}" />
+    <Folder Name="Properties" Id="{981d248c-0cc5-4830-8021-8c9641839149}" />
+    <Folder Name="Ref" Id="{ebf86cc9-aa61-4da6-85fc-cb2c4b314798}" />
+    <Folder Name="Requests" Id="{a6421a33-eb86-4c93-89a2-25744766bef4}" />
+    <Folder Name="StateMachine" Id="{0e935878-6be7-4dbd-8a44-3bb28cf6f32d}" />
+    <Property Name="Active" Id="{4067f616-4be7-408f-b39c-cc0cb395cb47}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Active : REFERENCE to bool]]></Declaration>
+      <Get Name="Get" Id="{098f3db3-2daf-471b-a7fa-511666c89fa8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Active ref= bActive;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Busy" Id="{4fd992bc-298b-491f-bae4-e17a3d330bd1}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Busy : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{4705f850-ecb5-488d-8a41-76a29cb1d27c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Busy ref= bBusy;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Delay" Id="{01a8d312-8e7e-4b41-9d1a-85c2d8f6493f}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Delay : TIME]]></Declaration>
+      <Get Name="Get" Id="{f82ad21a-86e3-446d-86a3-423860e3af7c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[delay := tDelay;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{8a618693-5ffd-4731-a19f-a684673bc1eb}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[tDelay := Delay;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Error" Id="{30ccea66-faf5-40ba-891e-4a203eb9dd9b}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Error : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{2eb8e07f-2b56-4c6a-b155-bca2139b0672}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error ref= bError;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ErrorID" Id="{922562ea-a0d6-4644-8dd3-394296ae3696}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY ErrorID : REFERENCE TO UDINT]]></Declaration>
+      <Get Name="Get" Id="{bb4370f6-078a-4806-8c57-c5e72810cf96}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ErrorID ref= eErrorID;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="M_SimulationLogic" Id="{2c14fa70-a933-4c9d-abb7-ca856cb27569}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED M_SimulationLogic 
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF poCoil.Out THEN
+	piNO.MR_SetForceValue();
+	
+ELSIF NOT poCoil.Out THEN
+	piNO.MR_ResetForceValue();
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Abort" Id="{967b785e-d2d6-4c82-854d-20aef3e5e059}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Abort : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eContactorState >= CONTACTOR_IDLE THEN
+	bBusy := TRUE;
+	bAbort := TRUE;
+	MR_Abort := FALSE;
+	eContactorState := CONTACTOR_ABORTING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : abort requested'));	
+	
+ELSIF eContactorState = CONTACTOR_UNINITIALIZED THEN
+	bAbort := FALSE;
+	MR_Abort := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : abort done'));	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_FirstCycle" Id="{6beb075a-7426-49bf-bbce-781f714eabef}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_FirstCycle : BOOL
+VAR_INPUT
+	sName 							: STRING;
+	sCoilModuleType					: STRING;
+	sCoilPortID						: STRING;
+	sNOModuleType					: STRING;
+	sNOPortID						: STRING;
+	tGoActiveTimeout				: TIME;
+	tDelay							: TIME;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piNO.EnableTimeout := TRUE;
+THIS^.sName := sName;								
+THIS^.tDelay := tDelay;	
+THIS^.PowerOnTimeout := tGoActiveTimeout;	
+THIS^.piNO.MR_FirstCycleEx(
+	sName := CONCAT(sName,':NO'),
+	sModuleType := sNOModuleType,
+	sPortID	:= sNOPortID,
+	bEnableTimeout := TRUE,
+	tDefaultTimeout	:= tGoActiveTimeout
+);
+THIS^.poCoil.MR_FirstCycle(
+	sName := CONCAT(sName,':Coil'),
+	sModuleType := sCoilModuleType,
+	sPortID := sCoilPortID
+);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Init" Id="{97cb0a47-7568-4020-8bad-633ef4cb21b7}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Init : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eContactorState = CONTACTOR_UNINITIALIZED THEN
+	bBusy := TRUE;
+	bInit := TRUE;
+	MR_Init := FALSE;
+	eContactorState := CONTACTOR_INITIALIZING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : initialization requested'));	
+	
+ELSIF eContactorState = CONTACTOR_IDLE THEN
+	bInit := FALSE;
+	MR_Init := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : initialization done'));	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_PowerOFF" Id="{95276fc6-098d-4fc9-9898-423857db68fe}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_PowerOFF : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eContactorState = CONTACTOR_IDLE
+	AND piNO.In 
+THEN
+	bBusy := TRUE;
+	bPowerOff := TRUE;
+	MR_PowerOFF := FALSE;
+	eContactorState := CONTACTOR_POWER_OFF;
+	eContactorGoHomeState := CONTACTOR_MOVE_START_TRACKING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' :Power Off requested'));	
+	
+ELSIF eContactorState = CONTACTOR_POWER_OFF_DONE THEN
+	bPowerOff := FALSE;
+	MR_PowerOFF := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' :Power Off done'));	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_PowerON" Id="{07ff67d5-0e97-4add-b6d8-532218d20650}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_PowerON : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eContactorState = CONTACTOR_IDLE
+	AND NOT piNO.In 
+THEN
+	bBusy := TRUE;
+	bPowerOn := TRUE;
+	MR_PowerON := FALSE;
+	eContactorState := CONTACTOR_POWER_ON;
+	eContactorGoActiveState := CONTACTOR_MOVE_START_TRACKING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : Power On requested'));	
+	
+ELSIF eContactorState = CONTACTOR_POWER_ON_DONE THEN
+	bPowerOn := FALSE;
+	MR_PowerON := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : Power On  done'));		
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Reset" Id="{c8f92bb7-744a-428f-a6b0-29b0a540886c}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eContactorState >= CONTACTOR_IDLE
+	AND bError 
+THEN
+	bBusy := TRUE;
+	bReset := TRUE;
+	MR_Reset := FALSE;
+	eContactorState := CONTACTOR_RESET;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : reset requested'));	
+	
+ELSIF eContactorState = CONTACTOR_RESET_DONE THEN
+	bReset := FALSE;
+	MR_Reset := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : reset done'));		
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Aborting" Id="{869111ff-9750-4da5-87bb-d815c54aac84}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED  MS_Aborting]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piNO.MR_Abort();
+
+IF  NOT piNO.Active THEN
+	//bBusy := FALSE;
+	eContactorState := CONTACTOR_UNINITIALIZED;	
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Idle" Id="{82d660d2-7f9b-4c2f-abe9-7aa3cd04f4d0}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Idle
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Initializing" Id="{e3ba8cfd-0884-4299-9451-8f1fcb96a700}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Initializing
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piNO.MR_Init();
+piNO.EnableTimeout := TRUE;
+
+IF piNO.Active 
+	AND NOT piNO.In 
+THEN
+	eCONTACTORState := CONTACTOR_READY_INITIALIZED;
+END_IF
+tonGeneral(
+	in := TRUE,
+	pt := T#0.1S
+);
+IF tonGeneral.Q
+	AND piNO.In
+THEN
+	bError := TRUE;
+	sReasonError := 'Coil not active Or NO incorrect';
+	tonGeneral(IN := FALSE);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_PowerOff" Id="{419a6950-9739-4b8b-a9bc-a6aa1727f682}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED  MS_PowerOff
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCoil.Out := FALSE;
+
+CASE eContactorGoHomeState OF
+	CONTACTOR_MOVE_START_TRACKING:
+		
+		IF NOT piNO.In THEN
+			IF TIME_TO_INT(tDelay) = 0 THEN
+				eContactorGoHomeState := CONTACTOR_MOVE_DONE;
+			ELSE
+				eContactorGoHomeState := CONTACTOR_MOVE_DELAY;
+			END_IF
+		END_IF
+		
+	CONTACTOR_MOVE_DELAY:
+		tonPowerOffDelay(IN := TRUE, PT := tDelay);
+		
+		IF tonPowerOffDelay.Q THEN
+			tonPowerOffDelay(IN := FALSE);
+			eContactorGoHomeState := CONTACTOR_MOVE_DONE;
+		END_IF
+		
+	CONTACTOR_MOVE_DONE:
+		eContactorState := CONTACTOR_POWER_OFF_DONE;
+	
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_PowerOffDone" Id="{9279a398-7945-488e-a61c-7837a71e7f7b}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_PowerOffDone
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bPowerOff THEN
+	bBusy := FALSE;
+	eContactorState := CONTACTOR_IDLE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_PowerOn" Id="{10a800f3-b619-4b3b-8668-09d3fb890f01}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED  MS_PowerOn
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCoil.Out := TRUE;
+
+CASE eContactorGoActiveState OF
+	CONTACTOR_MOVE_START_TRACKING:
+		piNO.MR_StartTracking();
+		
+		IF piNO.In THEN
+			IF TIME_TO_INT(tDelay) = 0 THEN
+				eContactorGoActiveState := CONTACTOR_MOVE_DONE;
+			ELSE
+				eContactorGoActiveState := CONTACTOR_MOVE_DELAY;
+			END_IF
+		END_IF
+		
+	CONTACTOR_MOVE_DELAY:
+		tonPowerOnDelay(IN := TRUE, PT := tDelay);
+		
+		IF tonPowerOnDelay.Q THEN
+			tonPowerOnDelay(IN := FALSE);
+			eContactorGoActiveState := CONTACTOR_MOVE_DONE;
+		END_IF
+		
+	CONTACTOR_MOVE_DONE:
+		eContactorState := CONTACTOR_POWER_ON_DONE;
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_PowerOnDone" Id="{55c26517-dc15-474e-a6cb-8e07bc2e2df1}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_PowerOnDone
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bPowerOn THEN
+	bBusy := FALSE;
+	eCONTACTORState := CONTACTOR_IDLE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ReadyInitialized" Id="{a05f1701-7670-4fd9-a89a-9080901797dd}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ReadyInitialized
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bBusy := FALSE;
+eContactorState := CONTACTOR_IDLE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Reset" Id="{761900e3-1142-4255-b766-3933c24fd3e4}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Reset
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCoil.Out := FALSE;
+
+bInit 		:= FALSE;
+bPowerOn 	:= FALSE;
+bPowerOff 	:= FALSE;
+bAbort		:= FALSE;
+
+tonPowerOffDelay(IN := FALSE);
+tonPowerOnDelay(IN := FALSE);
+tonMeasurementTimer(IN:= FALSE);
+
+piNO.MR_Reset();
+
+IF NOT piNO.ErrorTimedout THEN
+	eContactorState := CONTACTOR_RESET_DONE;
+END_IF
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ResetDone" Id="{e57bec45-4233-4d78-ae0e-96ae0aa9943b}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bReset THEN
+	bBusy := FALSE;
+	eContactorState := CONTACTOR_IDLE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Uninitialized" Id="{7ca730ab-7e0f-4376-8e1a-c7dd94e78241}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Uninitialized
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCoil.Out := FALSE;
+
+bError := FALSE;
+bBusy := FALSE;
+bPowered := FALSE;
+piNO.EnableForce := FALSE;
+piNO.EnableTimeout := FALSE;
+
+bInit 		:= FALSE;
+bPowerOn 	:= FALSE;
+bPowerOff	:= FALSE;
+bReset		:= FALSE;
+bAbort		:= FALSE;
+sReasonError := '';
+tonPowerOnDelay(IN := FALSE);
+tonPowerOffDelay(IN := FALSE);
+tonMeasurementTimer(IN:= FALSE);]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Name" Id="{b63ec85a-e496-4e13-8834-9498479714d5}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{82a2644d-eca9-486d-8e39-27a87ea8c8ea}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[name := sName;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{82d7468d-0dd2-47cf-a321-3ee29790b557}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[sName := Name;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Powered" Id="{933324d4-58d9-4f1d-88c5-ad5c2fdfd524}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Powered : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{a422860b-9424-4a34-810d-1003cb359681}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Powered ref= bPowered;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="PowerOnTime" Id="{7ed260cf-056f-47d3-95a1-ee703cce6186}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PowerOnTime : REFERENCE TO TIME]]></Declaration>
+      <Get Name="Get" Id="{f917c3fe-a108-4af0-8147-f2825bbd01a2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerOnTime REF= tPowerOn;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="PowerOnTimeout" Id="{e5cea9df-40e2-45c6-a7b2-b71356072ff6}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PowerOnTimeout : TIME]]></Declaration>
+      <Get Name="Get" Id="{5bd63b08-759c-4212-90dc-3843d78f9a82}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerOnTimeout := piNO.Timeout;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d11f9e4b-46d1-46d7-bb84-51ef2da9ddbd}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[piNO.Timeout := PowerOnTimeout;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ReasonError" Id="{417c0c12-9e85-4de4-87ab-53d1e4a8404a}" FolderPath="Properties\">
+      <Declaration><![CDATA[(*if Fail*)
+PROPERTY ReasonError : string]]></Declaration>
+      <Get Name="Get" Id="{015b44e4-4de1-43f7-ae21-e66f9a2f21d7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ReasonError := 'Dont have NO signal when PowerOn';]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ref_piNO" Id="{4c545766-9a61-4384-936f-ecfe725823c7}" FolderPath="Ref\">
+      <Declaration><![CDATA[PROPERTY ref_piNO : reference to  FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{98af76d7-c1f6-4f55-bfa1-32d1bc8c889b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_piNO ref= THIS^.piNO;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ref_poActiveCoil" Id="{378030a0-fe67-4d3f-ab83-3b578e42b934}" FolderPath="Ref\">
+      <Declaration><![CDATA[PROPERTY ref_poActiveCoil : reference to fb_digitalOutput]]></Declaration>
+      <Get Name="Get" Id="{f40aa29c-1703-4682-b6ab-367b5f9953ff}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_poActiveCoil ref= poCoil;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Simulation" Id="{bb46253d-188b-417f-b4be-28453475af47}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Simulation : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{4371b384-82f3-45e6-84f8-d7d597dc3ff3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Simulation := bSimulation;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{61350bee-db7a-440f-8950-1014ece9be5e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[bSimulation := Simulation;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="State" Id="{deafb955-396a-408c-a276-dd259010df00}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY State : REFERENCE TO E_ContactorState]]></Declaration>
+      <Get Name="Get" Id="{a20e04bc-05ad-4b5d-a387-1f24016e71a4}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[State ref= THIS^.eContactorState;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="StateMachine" Id="{caef0aa4-2028-49fb-be23-e91a9fb33218}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED StateMachine : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eContactorState OF
+	CONTACTOR_UNINITIALIZED:
+		MS_Uninitialized();
+		
+    CONTACTOR_INITIALIZING:
+		MS_Initializing();
+		
+    CONTACTOR_READY_INITIALIZED:
+		MS_ReadyInitialized();
+		
+    CONTACTOR_IDLE:
+		MS_Idle();
+				
+    CONTACTOR_POWER_ON:
+		MS_PowerOn();
+			
+    CONTACTOR_POWER_ON_DONE:
+		MS_PowerOnDone();
+	
+    CONTACTOR_POWER_OFF:
+		MS_PowerOff();
+			
+    CONTACTOR_POWER_OFF_DONE:
+		MS_PowerOffDone();
+		
+    CONTACTOR_RESET:
+		MS_Reset();
+				
+    CONTACTOR_RESET_DONE:
+		MS_ResetDone();
+				
+    CONTACTOR_ABORTING:			
+    	MS_Aborting();
+
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_ContactorFBNO">
+      <LineId Id="138" Count="10" />
+      <LineId Id="236" Count="1" />
+      <LineId Id="149" Count="4" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="157" Count="3" />
+      <LineId Id="240" Count="0" />
+      <LineId Id="161" Count="3" />
+      <LineId Id="169" Count="2" />
+      <LineId Id="241" Count="0" />
+      <LineId Id="243" Count="0" />
+      <LineId Id="242" Count="0" />
+      <LineId Id="244" Count="1" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="173" Count="1" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="178" Count="2" />
+      <LineId Id="185" Count="1" />
+      <LineId Id="188" Count="0" />
+      <LineId Id="78" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Active.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Busy.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Delay.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Delay.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Error.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.ErrorID.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.M_SimulationLogic">
+      <LineId Id="6" Count="1" />
+      <LineId Id="9" Count="2" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MR_Abort">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MR_FirstCycle">
+      <LineId Id="47" Count="0" />
+      <LineId Id="3" Count="1" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="42" Count="4" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MR_Init">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MR_PowerOFF">
+      <LineId Id="18" Count="0" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="19" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MR_PowerON">
+      <LineId Id="19" Count="0" />
+      <LineId Id="34" Count="1" />
+      <LineId Id="20" Count="6" />
+      <LineId Id="28" Count="4" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MR_Reset">
+      <LineId Id="3" Count="0" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="4" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_Aborting">
+      <LineId Id="4" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_Idle">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_Initializing">
+      <LineId Id="4" Count="0" />
+      <LineId Id="7" Count="2" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="17" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_PowerOff">
+      <LineId Id="4" Count="3" />
+      <LineId Id="9" Count="19" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_PowerOffDone">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_PowerOn">
+      <LineId Id="4" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_PowerOnDone">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_ReadyInitialized">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_Reset">
+      <LineId Id="24" Count="1" />
+      <LineId Id="3" Count="2" />
+      <LineId Id="7" Count="4" />
+      <LineId Id="13" Count="4" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="21" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_ResetDone">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.MS_Uninitialized">
+      <LineId Id="23" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="3" Count="1" />
+      <LineId Id="6" Count="1" />
+      <LineId Id="10" Count="4" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Powered.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.PowerOnTime.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.PowerOnTimeout.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.PowerOnTimeout.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.ReasonError.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.ref_piNO.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.ref_poActiveCoil.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Simulation.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.Simulation.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.State.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.StateMachine">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="43" Count="1" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="51" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

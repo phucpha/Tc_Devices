@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ContactorNonFB_ThermalRelay" Id="{6e03c52a-c6fa-4ea2-a467-73ac2fad92ac}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ContactorNonFB_ThermalRelay IMPLEMENTS I_ActivePowerNoFB
+VAR
+	piFR		: FB_DigitalInput;
+	poCoil		: FB_DigitalOutput;
+	bOverload	: BOOL;
+	bPowered	: BOOL;
+
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[bPowered := poCoil.Out;
+bOverload :=  piFR.In;]]></ST>
+    </Implementation>
+    <Method Name="MR_PowerOFF" Id="{f586367f-63e8-4000-9264-0308e5e1e7c9}">
+      <Declaration><![CDATA[METHOD MR_PowerOFF : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCoil.Out := FALSE;
+MR_PowerOFF := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_PowerON" Id="{c3e3ebf4-5abb-46b7-9be9-bbbcb5319997}">
+      <Declaration><![CDATA[METHOD MR_PowerON : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCoil.Out := TRUE;
+MR_PowerON := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Powered" Id="{0b18b9fd-dbac-46c1-ba6f-05bd18cff3d7}">
+      <Declaration><![CDATA[PROPERTY Powered : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{87f0f6dd-a7fd-42b5-a3b5-5cdc58c7737e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Powered ref= bPowered;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay">
+      <LineId Id="22" Count="0" />
+      <LineId Id="15" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay.MR_PowerOFF">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay.MR_PowerON">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay.Powered.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

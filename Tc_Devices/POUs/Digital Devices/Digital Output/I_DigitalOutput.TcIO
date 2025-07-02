@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_DigitalOutput" Id="{4c0288cf-c6d2-4267-848e-f61772f5ef93}">
+    <Declaration><![CDATA[INTERFACE I_DigitalOutput EXTENDS I_DigitalDevice
+]]></Declaration>
+    <Property Name="Out" Id="{7323f3fc-552d-42ba-9f27-1a6fe40770cd}">
+      <Declaration><![CDATA[PROPERTY Out : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{ece55978-30da-43ec-b487-3cb2e47d95fa}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{d920bee1-f861-4ab8-ab5b-ae1bd65317b8}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+  </Itf>
+</TcPlcObject>

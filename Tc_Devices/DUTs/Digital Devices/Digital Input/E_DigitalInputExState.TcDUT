@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_DigitalInputExState" Id="{91294d43-5625-45bf-8647-b015e52d521e}">
+    <Declaration><![CDATA[{attribute 'strict'}
+TYPE E_DigitalInputExState :
+(
+	DIGITAL_INPUT_EX_UNINITIALIZED			:= 0,	(*  *)
+	DIGITAL_INPUT_EX_INITIALIZING			:= 10,	(*  *)
+	DIGITAL_INPUT_EX_READY_INITIALIZED		:= 20,	(*  *)
+	DIGITAL_INPUT_EX_IDLE					:= 30,	(*  *)
+	DIGITAL_INPUT_EX_TIMEOUT_TRACKING		:= 40,	(*  *)
+	DIGITAL_INPUT_EX_TIMEOUT_TRACKING_DONE	:= 50,	(*  *)
+	DIGITAL_INPUT_EX_RESET					:= 60,	(*  *)
+	DIGITAL_INPUT_EX_RESET_DONE				:= 70,	(*  *)
+	DIGITAL_INPUT_EX_ABORTING				:= -10	(*  *)
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

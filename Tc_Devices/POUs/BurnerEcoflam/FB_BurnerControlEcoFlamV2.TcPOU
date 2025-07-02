@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_BurnerControlEcoFlamV2" Id="{890a56d1-1ac8-4d8d-bc91-d02dd763dd8f}" SpecialFunc="None">
+    <Declaration><![CDATA[(* This function use for BurnerControlEcoFlam have Reset by Digital output.
+*)
+FUNCTION_BLOCK FB_BurnerControlEcoFlamV2 EXTENDS FB_BurnerControlEcoFlam
+VAR
+	poReset : FB_DigitalOutput;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[SUPER^();]]></ST>
+    </Implementation>
+    <Method Name="MR_Reset" Id="{1073984c-af6c-466e-a7a3-8ad219bb6330}">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poReset.Out := TRUE;
+SUPER^.MS_Reset();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ResetDone" Id="{84372ba7-44d5-4c6d-a992-a36d0f299462}">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poReset.Out := FALSE;
+SUPER^.MS_ResetDone();]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Ref_poReset" Id="{19a4886f-ceaa-4baa-af92-8ae8e5948c09}">
+      <Declaration><![CDATA[PROPERTY Ref_poReset : Reference to FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{837e7930-98a4-4da2-afea-30550f6a972f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_poReset ref= poReset;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_BurnerControlEcoFlamV2">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV2.MR_Reset">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV2.MS_ResetDone">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV2.Ref_poReset.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56" ClassName="CNestedPlcProjDef">
+	<Project GUID="{BA4532CC-976D-4A00-93C4-933DE8777AE4}" Name="Tc_Devices" PrjFilePath="..\..\Tc_Devices\Tc_Devices.plcproj" TmcFilePath="..\..\Tc_Devices\Tc_Devices.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
+		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{800843D3-E7AE-9BAE-2475-4D05AF1E6CFE}">
+			<Name>Tc_Devices Instance</Name>
+			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
+			<Vars VarGrpType="1">
+				<Name>PlcTask Inputs</Name>
+				<Var>
+					<Name>MAIN.analoginput.iRawValue</Name>
+					<Type>INT</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.analoginput.bError</Name>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbburner.piFault.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbburner.piFireSussess.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbburnerw.piFault.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbburnerw.piFireSussess.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbContactor.piNO.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbContactor1FB.piNO.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbContactornoFB.piFR.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbCylinder.piHomeSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbContactor1FB.piFR.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbCylinder.piActiveSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+			</Vars>
+			<Vars VarGrpType="2" AreaNo="1">
+				<Name>PlcTask Outputs</Name>
+				<Var>
+					<Name>MAIN.fbburnerw.poReset.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbContactor.poCoil.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbContactor1FB.poCoil.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbContactornoFB.poCoil.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbCylinder.poActiveValve.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>MAIN.fbCylinder.poHomeValve.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+			</Vars>
+			<Contexts>
+				<Context>
+					<Id>0</Id>
+					<Name>PlcTask</Name>
+					<ManualConfig>
+						<OTCID>#x02010030</OTCID>
+					</ManualConfig>
+					<Priority>20</Priority>
+					<CycleTime>10000000</CycleTime>
+				</Context>
+			</Contexts>
+			<TaskPouOids>
+				<TaskPouOid Prio="20" OTCID="#x08502001"/>
+			</TaskPouOids>
+		</Instance>
+	</Project>
+</TcSmItem>

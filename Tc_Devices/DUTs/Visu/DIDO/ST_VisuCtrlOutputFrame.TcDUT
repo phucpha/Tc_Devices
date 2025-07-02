@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_VisuCtrlOutputFrame" Id="{31f69d41-3c40-4c34-9f94-2cc56d36b2c2}">
+    <Declaration><![CDATA[TYPE ST_VisuCtrlOutputFrame EXTENDS ST_VisuCtrlUnitFrame :
+STRUCT
+	btnOut 			: BOOL; 		(* This button allows to control ouptu manualy if it's set as controlable *)
+	bOut 			: BOOL;			(* This bit indicates the status of output in manual mode *)
+	bControlable	: BOOL;			(* This bit is used to lock control of output via manual mode - read access only *)
+	sModuleType		: STRING;		(* Module type e.g. EL1xxx *)
+	sPortID			: STRING;		(* Wire id connected to port *)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

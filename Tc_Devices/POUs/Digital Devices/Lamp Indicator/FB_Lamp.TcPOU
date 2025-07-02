@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_Lamp" Id="{5d11484a-ff62-422b-a102-cd6045c28923}" SpecialFunc="None">
+    <Declaration><![CDATA[(* 
+:Description: 
+*)
+FUNCTION_BLOCK FB_Lamp EXTENDS FB_DigitalDevice IMPLEMENTS I_Lamp
+VAR
+	bFirstCycle : BOOL := TRUE;
+	
+	poLamp				: FB_DigitalOutput;		(*  *)
+	eLampState			: E_LampState;			(*  *)
+	tonBlinkingTimer	: TON;					(*  *)
+	tBlinkTime			: TIME;					(*  *)
+	In: INT;
+END_VAR
+(*
+Version history:
+
++-------------+------------+----------------+----------+------------------------------------------+
+|Date         | Version    | created under  | Author   | Remark                                   |
++=============+============+================+==========+==========================================+
+|2021-11      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                   |
++-------------+------------+----------------+----------+------------------------------------------+
+
+*)]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bFirstCycle THEN
+	bFirstCycle := FALSE;
+	poLamp.MR_FirstCycle(CONCAT('Digital output of: ',sName),sModuleType,sPortID);
+END_IF
+
+(*  *)
+tonBlinkingTimer(	IN := (eLampState = LAMP_BLINKING_ON OR 
+					eLampState = LAMP_BLINKING_OFF) AND NOT tonBlinkingTimer.Q,
+					PT := tBlinkTime);
+
+(*  *)
+StateMachine();
+
+(* *)
+poLamp.Out := (eLampState = LAMP_ON OR eLampState = LAMP_BLINKING_ON);]]></ST>
+    </Implementation>
+    <Folder Name="Properties" Id="{bd07917e-cb22-4ea1-ba9a-0f4118418599}">
+      <Folder Name="Status" Id="{7960235c-9828-4ac3-9fc5-272251bb4fbe}" />
+    </Folder>
+    <Folder Name="Requests" Id="{9f7100f9-b61a-4af9-af23-a458bacbe627}" />
+    <Folder Name="StateMachine" Id="{70afdb4d-d7bc-4901-88e7-e6368db26210}" />
+    <Method Name="MR_LampBlink" Id="{41f89e70-c216-4231-82fa-c80f15882b70}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_LampBlink : BOOL
+VAR_INPUT
+	tBlinkTime : TIME;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.tBlinkTime := tBlinkTime;
+
+IF eLampState = LAMP_OFF THEN
+	eLampState := LAMP_BLINKING_ON;
+	
+ELSIF eLampState = LAMP_ON THEN
+	eLampState := LAMP_BLINKING_OFF;
+	
+END_IF
+
+MR_LampBlink := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_LampOff" Id="{5626072c-f5b1-42e1-95b9-791a208b7db9}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_LampOff : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[eLampState := LAMP_OFF;
+MR_LampOff := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_LampOn" Id="{41cb5f6d-3d7c-4513-8c0a-d2149dd66c43}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_LampOn : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[eLampState := LAMP_ON;
+MR_LampOn := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_LampBlinkingOff" Id="{bcbd1e37-abe6-4fb3-bd34-74d15335e77c}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_LampBlinkingOff
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF tonBlinkingTimer.Q THEN
+	eLampState := LAMP_BLINKING_ON;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_LampBlinkingOn" Id="{8998bf0f-0199-4c2c-9fc1-9711946cfe93}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_LampBlinkingOn
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF tonBlinkingTimer.Q THEN
+	eLampState := LAMP_BLINKING_OFF;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_LampOff" Id="{44403d02-777c-4fee-9bf6-5283e55ca2a0}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_LampOff
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_LampOn" Id="{213ee165-4a6b-46f1-a569-2944625b3b9a}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_LampOn
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StateMachine" Id="{246ccf73-1ade-487b-ac37-52172d8ebfd1}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED StateMachine
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[(*  *)
+CASE eLampState OF
+	LAMP_OFF:
+		MS_LampOff();
+		
+	LAMP_ON:
+		MS_LampOn();
+		
+	LAMP_BLINKING_ON:
+		MS_LampBlinkingOn();
+		
+	LAMP_BLINKING_OFF:
+		MS_LampBlinkingOff();
+	
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Status" Id="{5e3d4916-1355-41aa-896c-8b46371a1027}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY Status : REFERENCE TO E_LampState
+]]></Declaration>
+      <Get Name="Get" Id="{193f50a4-72bb-4582-b8b3-dfdeb43d387d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Status REF= eLampState;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_Lamp">
+      <LineId Id="3" Count="13" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.MR_LampBlink">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.MR_LampOff">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.MR_LampOn">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.MS_LampBlinkingOff">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.MS_LampBlinkingOn">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.MS_LampOff">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.MS_LampOn">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.StateMachine">
+      <LineId Id="3" Count="13" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Lamp.Status.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

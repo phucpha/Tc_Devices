@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_AnalogInputThermocouple" Id="{b85ab3fe-f3eb-4327-9ef8-a140d597c9c1}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_AnalogInputThermocouple EXTENDS FB_DigitalDevice// use for El 3314
+VAR
+	iRawValue	AT%I*: INT;
+	lrSclale : LREAL := 0.1;
+	lrValue	: LREAL;
+	bError		AT%I* : BOOL;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[lrValue := INT_TO_LREAL(iRawValue)*lrSclale;
+]]></ST>
+    </Implementation>
+    <Folder Name="Properties" Id="{5cf42921-bbce-4702-97a5-1a99b4a0783b}" />
+    <Property Name="Error" Id="{ab2e1c44-95b0-4ebc-94e8-615ac7269816}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Error :  bool]]></Declaration>
+      <Get Name="Get" Id="{bda8db2e-1e74-4319-afff-ff0f41d9c0b7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := bError;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Scale" Id="{2e0c16de-5464-4cc7-a842-5343f66e8a06}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Scale : lreal // Value = rawValue form terminal * scale]]></Declaration>
+      <Get Name="Get" Id="{3e56ef36-6590-4693-a2e1-2ede761b621d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Scale := lrSclale;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{eeadc2bd-2686-47d0-8a57-718c35b02cd1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[lrSclale := Scale;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Value" Id="{56861794-75ed-4812-9d3b-6dd02f1ebe67}" FolderPath="Properties\">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'variable'}
+PROPERTY Value : REFERENCE TO  lreal]]></Declaration>
+      <Get Name="Get" Id="{2b4a1990-be09-4658-8576-10da6ebbc964}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Value ref= lrValue;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_AnalogInputThermocouple">
+      <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_AnalogInputThermocouple.Error.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_AnalogInputThermocouple.Scale.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_AnalogInputThermocouple.Scale.Set">
+      <LineId Id="2" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_AnalogInputThermocouple.Value.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_LampState" Id="{0dff9b04-9184-4247-9672-3b239e093aac}">
+    <Declaration><![CDATA[{attribute 'strict'}
+{Attribute 'to_string'}
+TYPE E_LampState :
+(
+	LAMP_OFF 			:= 0,	(* Lamp is off *)
+	LAMP_ON				:= 10,	(* Lamp is on *)
+	LAMP_BLINKING_OFF	:= 20,	(* Lamp is blinking - current off *)
+	LAMP_BLINKING_ON	:= 30	(* Lamp is bliniking - current on *)
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

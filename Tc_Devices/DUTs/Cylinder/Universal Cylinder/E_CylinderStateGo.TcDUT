@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_CylinderStateGo" Id="{ccc75c1f-a73d-410f-b6da-ec2d23a5d7ff}">
+    <Declaration><![CDATA[{attribute 'strict'}
+TYPE E_CylinderStateGo :
+(
+	CYLINDER_MOVE_START_TRACKING	:= 0,
+	CYLINDER_MOVE_DELAY				:= 10,
+	CYLINDER_MOVE_DONE				:= 20
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

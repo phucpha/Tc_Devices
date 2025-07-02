@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_CylinderState" Id="{dd6ae1c0-41f8-42b1-9472-3cd77443301c}">
+    <Declaration><![CDATA[{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_CylinderState :
+(
+	CYLINDER_UNINITIALIZED		:= 0,	(* Cylinder is uninitialized *)
+	CYLINDER_INITIALIZING		:= 10,	(* Initialization in progress *)
+	CYLINDER_READY_INITIALIZED	:= 20,	(*  *)
+	CYLINDER_IDLE				:= 30,	(* Cylinder ready to work *)
+	CYLINDER_GO_ACTIVE			:= 40,	(* Cylinder is going to active position *)
+	CYLINDER_GO_ACTIVE_DONE		:= 50,	(* Cylinder is in active position *)
+	CYLINDER_GO_HOME			:= 60,	(* Cylinder is going to home position *)
+	CYLINDER_GO_HOME_DONE		:= 70,	(* Cylinder is in home position *)
+	CYLINDER_RELEASE			:= 80,	(* Cylinder is going to release all valves *)
+	CYLINDER_RELEASE_DONE		:= 90,	(* Cylinder has been released *)
+	CYLINDER_RESET				:= 100,	(* Reseting function block *)
+	CYLINDER_RESET_DONE			:= 110,	(* Reset done *)
+	CYLINDER_ABORTING 			:= -10	(* Aborting *)
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

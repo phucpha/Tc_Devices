@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_ActivePowerType" Id="{a2688134-405a-44e9-ad81-58a16cbb5ec1}">
+    <Declaration><![CDATA[{attribute 'strict'}
+TYPE E_ActivePowerType :
+(
+	ACTIVE_POWER_TYPE_NO_FEEDBACK,
+	ACTIVE_POWER_TYPE_FEEDBACK
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

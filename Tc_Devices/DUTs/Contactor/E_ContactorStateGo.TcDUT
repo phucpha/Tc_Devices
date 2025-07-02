@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_ContactorStateGo" Id="{1880ad56-2677-470e-abf1-bb67fbf704ab}">
+    <Declaration><![CDATA[{Attribute 'to_string'}
+{attribute 'strict'}
+TYPE E_ContactorStateGo :
+(
+	CONTACTOR_MOVE_START_TRACKING	:= 0,
+	CONTACTOR_MOVE_DELAY			:= 10,
+	CONTACTOR_MOVE_DONE				:= 20
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_ContactorState" Id="{66978c41-1262-4bc5-b33e-dfc1a26a9005}">
+    <Declaration><![CDATA[{attribute 'strict'}
+{Attribute 'to_string'}
+TYPE E_ContactorState :
+(
+	CONTACTOR_UNINITIALIZED		:= 0,	
+	CONTACTOR_INITIALIZING		:= 10,	
+	CONTACTOR_READY_INITIALIZED	:= 20,	
+	CONTACTOR_IDLE				:= 30,	
+	CONTACTOR_POWER_ON			:= 40,
+	CONTACTOR_POWER_ON_DONE		:= 50,
+	CONTACTOR_POWER_OFF			:= 60,
+	CONTACTOR_POWER_OFF_DONE	:= 70,
+	CONTACTOR_RESET				:= 100,
+	CONTACTOR_RESET_DONE		:= 110,
+	CONTACTOR_ABORTING 			:= -10
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

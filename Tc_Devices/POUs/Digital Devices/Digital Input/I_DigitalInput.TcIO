@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_DigitalInput" Id="{598e54c6-5126-4b16-91f1-a31578c62fc9}">
+    <Declaration><![CDATA[INTERFACE I_DigitalInput EXTENDS I_DigitalDevice
+]]></Declaration>
+    <Property Name="EnableForce" Id="{19756f5f-eb61-4f19-a512-86e5f58d5561}">
+      <Declaration><![CDATA[PROPERTY EnableForce : BOOL]]></Declaration>
+      <Get Name="Get" Id="{f8926b77-5eca-47f4-95c7-382a953a9864}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{e0fd76b2-005b-49a3-b540-0270ba9359c1}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="FallingTrigger" Id="{b6cc4d2d-0910-4216-8ca8-9708e2f2b075}">
+      <Declaration><![CDATA[PROPERTY FallingTrigger : BOOL]]></Declaration>
+      <Get Name="Get" Id="{2d5e2cc6-5072-4c10-939f-aa8c59a1e76a}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="In" Id="{f00b1dab-047f-4bf8-a08e-17b87ee2dc8d}">
+      <Declaration><![CDATA[PROPERTY In : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{f44289c4-135f-4aa9-8640-a2de0f7ee5a6}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="MR_ResetForceValue" Id="{ffd57104-d619-4d6c-8e26-1dcae544bbe2}">
+      <Declaration><![CDATA[METHOD MR_ResetForceValue
+
+]]></Declaration>
+    </Method>
+    <Method Name="MR_SetForceValue" Id="{c955e1da-884d-4b5a-b167-be532b077564}">
+      <Declaration><![CDATA[METHOD MR_SetForceValue
+
+]]></Declaration>
+    </Method>
+    <Property Name="RisingTrigger" Id="{73be4545-7b24-4cbb-ad2c-0dc8d5327a86}">
+      <Declaration><![CDATA[PROPERTY RisingTrigger : BOOL]]></Declaration>
+      <Get Name="Get" Id="{9c56e293-c6a1-4a24-90e6-ddd8b700564c}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

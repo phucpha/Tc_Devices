@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_VisuCtrlBurnerFrame" Id="{4624bf6f-660c-4964-9d68-41579f02b0f2}">
+    <Declaration><![CDATA[TYPE ST_VisuCtrlBurnerFrame :
+STRUCT
+	btnInit				: BOOL;
+	btnReset			: BOOL;
+	btnAbort			: BOOL;
+	btnAppendPowerOn	: BOOL;
+	btnIgnition			: BOOL;
+	btnStop				: BOOL;
+	sName				: STRING;
+	bError				: BOOL;
+	bFault				: BOOL;
+	bIgnitionSuccess	: BOOL;
+	
+	eState				: E_EcoFlamState;
+	sState				: STRING;
+END_STRUCT
+END_TYPE
+
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_UniversalCylinder" Id="{0315c2ce-d6b2-4f69-913b-739b04a870e8}">
+    <Declaration><![CDATA[INTERFACE I_UniversalCylinder
+]]></Declaration>
+    <Property Name="Active" Id="{048bdad3-82ce-4d13-b877-36b3d390e799}">
+      <Declaration><![CDATA[PROPERTY Active : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{62d437a1-ecd2-416e-b07f-c88efbd20cf8}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="ActiveTimeout" Id="{5d34b7f2-2841-4b23-90dc-3226630c6168}">
+      <Declaration><![CDATA[PROPERTY ActiveTimeout : TIME]]></Declaration>
+      <Get Name="Get" Id="{6f574178-46cb-4b26-80cd-467720e62d7c}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{fd48ef83-c592-4b8b-b8c2-42ae4ec8ff01}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="Busy" Id="{1ef25b99-2f4c-479e-9da8-52635ca3b305}">
+      <Declaration><![CDATA[PROPERTY Busy : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{5aba5d53-2995-4a3a-a68a-0b708cfdb2d8}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Delay" Id="{051c23da-a19d-4849-99e0-331664ec0945}">
+      <Declaration><![CDATA[PROPERTY Delay : TIME]]></Declaration>
+      <Get Name="Get" Id="{a68a9382-a52f-4408-9d3d-8c9ed709dd93}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{fe9caf82-31f2-4c5b-8fb2-fd5228c7412b}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="Error" Id="{7f941602-632a-430a-9ace-db32119e2e53}">
+      <Declaration><![CDATA[PROPERTY Error : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{49be87d5-41a2-4c3e-9b0f-18c08d9cb5c4}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="ErrorID" Id="{40083fbb-e387-4468-8b8d-d567d01cf0e7}">
+      <Declaration><![CDATA[PROPERTY ErrorID : REFERENCE TO E_CylinderError]]></Declaration>
+      <Get Name="Get" Id="{65c187af-fa8f-45eb-bc7e-cca5cebcebc8}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="HomeTimeout" Id="{45cf91b6-d616-4f09-9ee9-f8aec0c6bd9e}">
+      <Declaration><![CDATA[PROPERTY HomeTimeout : TIME]]></Declaration>
+      <Get Name="Get" Id="{026b9a2a-baa7-49d0-a977-182b6f585cc2}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{1d09241c-3218-4e15-b0bd-2ebe10993d44}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="MoveActiveTime" Id="{49b3ec8d-20a4-4de2-acee-83a97a9212cd}">
+      <Declaration><![CDATA[PROPERTY MoveActiveTime : REFERENCE TO TIME]]></Declaration>
+      <Get Name="Get" Id="{0cf478c5-0e19-42b4-bf4b-d2f4e32ffc6f}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="MoveHomeTime" Id="{e3e96d2f-6f57-4a61-a8bb-63dd0f6e6062}">
+      <Declaration><![CDATA[PROPERTY MoveHomeTime : REFERENCE TO TIME]]></Declaration>
+      <Get Name="Get" Id="{8abecc2f-2425-4225-836d-620866353b6c}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="MR_Abort" Id="{552189ae-5814-4f20-962b-c21f7efa8be8}">
+      <Declaration><![CDATA[METHOD MR_Abort : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_FirstCycle" Id="{3d6a4713-dece-42c3-aaa2-08255c9dfe54}">
+      <Declaration><![CDATA[METHOD MR_FirstCycle : BOOL
+VAR_INPUT
+sName 							: STRING;
+	sHomeSensorModuleType			: STRING;
+	sHomeSensorPortID				: STRING;
+	sActiveSensorModuleType			: STRING;
+	sActiveSensorPortID				: STRING;
+	tGoHomeTimeout					: TIME;
+	tGoActiveTimeout				: TIME;
+	tDelay							: TIME;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_GoActive" Id="{ef93d20b-29de-4be1-886d-f3a00a2386e3}">
+      <Declaration><![CDATA[METHOD MR_GoActive : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_GoHome" Id="{1a7382f9-5848-4f29-bbac-3ece5df16a29}">
+      <Declaration><![CDATA[METHOD MR_GoHome : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Init" Id="{47e57006-aee3-44d4-93e3-5d19d932c8bc}">
+      <Declaration><![CDATA[METHOD MR_Init : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Release" Id="{0b91887c-ace3-412a-994a-5839e594ba15}">
+      <Declaration><![CDATA[METHOD MR_Release : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Reset" Id="{06d96bea-ca10-4723-a0f2-fbd6213cfb9d}">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Name" Id="{c40d3ec9-46d3-435b-a516-a4332c302df1}">
+      <Declaration><![CDATA[PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{d22575fe-91f1-4c82-bef2-b2b206373308}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{d31515d7-a168-4e2e-b72a-904927bc46b3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="PositionActive" Id="{e9dccb03-fbac-4ca0-8a46-476631f7ad9a}">
+      <Declaration><![CDATA[PROPERTY PositionActive : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{30a243b1-e906-43ff-b503-133dd1769996}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="PositionHold" Id="{69dd445e-e158-470d-8030-32cbee1afde9}">
+      <Declaration><![CDATA[PROPERTY PositionHold : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{3414c3bd-5db9-45ac-a16a-5b5c8199b0e9}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="PositionHome" Id="{59f318f7-4322-4b83-b9c0-9d703ac4748e}">
+      <Declaration><![CDATA[PROPERTY PositionHome : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{a1e1cd1c-2192-4b5d-87de-40e505142c95}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Simulation" Id="{a47c5135-2c11-4f3e-b4c2-9f5ab5073cc6}">
+      <Declaration><![CDATA[PROPERTY Simulation : BOOL]]></Declaration>
+      <Get Name="Get" Id="{5833066f-0b16-40e8-9ed4-29642b7e00e5}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{2883c1f3-e67e-43ff-965e-51ecf8ea566f}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="State" Id="{aae48864-fcd8-4335-b206-8ef48737db30}">
+      <Declaration><![CDATA[PROPERTY State : REFERENCE TO E_CylinderState]]></Declaration>
+      <Get Name="Get" Id="{a5ef43bf-50e2-4aa4-97a2-cafe341ece3a}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

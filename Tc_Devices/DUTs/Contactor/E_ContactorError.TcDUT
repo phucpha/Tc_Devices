@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_ContactorError" Id="{233b670d-e1d4-4861-88b3-bef3f0e4a969}">
+    <Declaration><![CDATA[{attribute 'strict'}
+{Attribute 'to_string'}
+TYPE E_ContactorError :
+(
+	CONTACTOR_ERROR_OK := 0,
+	CONTACTOR_ERROR_POWER_ON_TIMED_OUT := 20
+)UDINT := CONTACTOR_ERROR_OK;
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_BurnerControlEcoFlam" Id="{96139258-e966-441e-9968-7c9453e9fcdb}">
+    <Declaration><![CDATA[INTERFACE I_BurnerControlEcoFlam
+]]></Declaration>
+    <Folder Name="Properties" Id="{8e621353-8062-4a97-8f1a-564c5d59051b}" />
+    <Folder Name="Request" Id="{a0031341-14f3-4bea-b304-3460e59d87a7}" />
+    <Property Name="Busy" Id="{c1427fa1-16b0-48e4-bfd1-fad571f55d76}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Busy : reference to bool]]></Declaration>
+      <Get Name="Get" Id="{6bb4c2bc-ae98-465c-a556-868a581a2c0a}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="error" Id="{0255438b-0e05-42b0-8cc7-e0f2d50e243c}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY error : REFERENCE to bool]]></Declaration>
+      <Get Name="Get" Id="{bb3361ff-ebd2-4c31-8067-57e789894748}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="IgnitionSucess" Id="{5bdc5b82-8f6e-4f42-93fa-c2e0eef7c77a}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY IgnitionSucess : bool]]></Declaration>
+      <Get Name="Get" Id="{393603a1-16c2-490d-bba6-4ef40c66b0f1}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="isStop" Id="{531c4f2e-c9da-4b2e-82e9-578e0b17d64a}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY isStop : bool]]></Declaration>
+      <Get Name="Get" Id="{ac4fe213-2025-43de-856b-afecf30ba0af}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="MR_Abort" Id="{2e7e033e-d0ef-464e-b4c4-de62b8b82c14}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Abort : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_AppendPowerOn" Id="{6caa4a12-0043-47d9-8be4-fc0f7295b0e5}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_AppendPowerOn : BOOL
+VAR_INPUT
+	iPowerON	: I_ActivePower;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Ignition" Id="{dd09d352-8305-4255-b39f-87710725c865}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Ignition : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Init" Id="{bac33b21-3d57-4f6e-94b7-f96eaaa1d985}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD  MR_Init : bool // just Acknowledge already append the I_activepower
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Reset" Id="{8d5a4947-370d-4c23-bbd6-607c986532eb}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_Stop" Id="{6eb02f76-5f30-479e-a4b8-51b727a3041f}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Stop : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Name" Id="{586bc4e4-fc07-47e1-8f5c-caf2790eadca}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Name : string]]></Declaration>
+      <Get Name="Get" Id="{9576fa5d-bbc3-4494-923a-d014cfac7139}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{3e3f7db2-2cce-4fe3-b6d5-d2c2145b701d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="Ref_IfActivePower" Id="{668486ed-4f89-4f7f-a0fd-57e4d3685228}">
+      <Declaration><![CDATA[PROPERTY Ref_IfActivePower : REFERENCE TO I_ActivePower]]></Declaration>
+      <Get Name="Get" Id="{eed0b2a2-cc11-46b5-a8c5-6ee1124cbfa3}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="ref_piFault" Id="{e7964e33-d217-481e-a80e-bf21a43d33ed}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY ref_piFault : reference to  FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{4a62b2c5-3afa-4c41-91bb-971ab641f71f}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="ref_piIgnitionSucess" Id="{d5bdccdf-64f2-4ee6-819a-cac6a2f3016f}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY ref_piIgnitionSucess : reference to  FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{e21df271-7210-4163-b79f-1d5aae27e347}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="State" Id="{6650d35d-e31c-4ed8-bf79-3f0d45e92cc8}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY State : E_EcoFlamState]]></Declaration>
+      <Get Name="Get" Id="{cfbdebad-aef0-482b-af2e-59802a33b9cb}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

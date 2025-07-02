@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_Lamp" Id="{d0b73a45-3bd5-44d9-be46-e6690bf5b8cb}">
+    <Declaration><![CDATA[INTERFACE I_Lamp EXTENDS I_DigitalDevice
+]]></Declaration>
+    <Method Name="MR_LampBlink" Id="{41edfb83-2b18-4ef2-916f-562fe992670a}">
+      <Declaration><![CDATA[METHOD MR_LampBlink : BOOL
+VAR_INPUT
+	tBlinkTime : TIME;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_LampOff" Id="{afecd74b-3c1b-4e95-8e10-7e4c8399ceef}">
+      <Declaration><![CDATA[METHOD MR_LampOff : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_LampOn" Id="{fc336671-b639-4cde-b139-ad45887cb2d9}">
+      <Declaration><![CDATA[METHOD MR_LampOn : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Status" Id="{fb1ba3a9-1eb9-44e5-a0a2-b56c0d9b4d2d}">
+      <Declaration><![CDATA[PROPERTY Status : REFERENCE TO E_LampState]]></Declaration>
+      <Get Name="Get" Id="{14d36274-5a2f-4836-81a3-405e0ea76cfe}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

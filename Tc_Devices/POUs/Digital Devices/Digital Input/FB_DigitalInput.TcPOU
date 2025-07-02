@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_DigitalInput" Id="{bedeeace-128a-4c52-a09e-68eee13bdaca}" SpecialFunc="None">
+    <Declaration><![CDATA[(* 
+| :Description: This function block represents basic digital input and can be used for creating an instance of signle digital input device like buttons, switches, sensors.
+| To get the current status of digital input use "Value" property. To simulate state of the input by software set "Enable Force" parameter and change value via "MR_ResetForceValue" and "MR_SetForceValue" methods.
+*)
+FUNCTION_BLOCK FB_DigitalInput EXTENDS FB_DigitalDevice IMPLEMENTS I_DigitalInput
+VAR
+	(* Internal status *)
+	bIn				AT %I*	: BOOL;		(* Current value of input *)
+	bInForced				: BOOL;		(* Forced value from software *)
+	bEnableForce			: BOOL;		(* Enable forcing of the input from software *)
+	bRisingTrigger 			: BOOL;		(* Rising trigger of input detected*)
+	bFallingTrigger 		: BOOL;		(* Falling trigger of input detected*)
+	
+	(* Function blocks *)
+	rtRisingTrigger 		: R_TRIG;	(* Rising trigger detecting FB*)
+	ftFallingTrigger		: F_TRIG;	(* Falling trigger detecting FB*)
+END_VAR
+(*
+Version history:
+
++-------------+------------+----------------+----------+------------------------------------------+
+|Date         | Version    | created under  | Author   | Remark                                   |
++=============+============+================+==========+==========================================+
+|2021-11      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                   |
++-------------+------------+----------------+----------+------------------------------------------+
+|2022-01      | 1.1.0.0    | V3.1.4024.22   | ADBO     | Changed to child of FB_DigitalDevice     |
++-------------+------------+----------------+----------+------------------------------------------+
+
+*)]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Properties" Id="{b9c448b3-015a-44fc-9825-650c8552021d}">
+      <Folder Name="Parameters" Id="{62c40e2f-6a2c-4616-9168-b453c85c815f}" />
+      <Folder Name="Status" Id="{9d3f748c-cf49-4e67-bfe7-a00e3a535781}" />
+    </Folder>
+    <Folder Name="Requests" Id="{ac88b929-e11a-4b07-bd28-9602c1ffbbea}" />
+    <Property Name="EnableForce" Id="{bdfe49aa-0cd9-495a-bfe3-ba0f2883f93c}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY EnableForce : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{6022955a-088a-4b51-99f2-296c5d1da40e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[EnableForce := bEnableForce;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{5f2cee22-a1ed-4d67-9b66-d992c03f92bb}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[bEnableForce := EnableForce;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="FallingTrigger" Id="{89ab6be1-df5f-4135-99f6-4f2830efe301}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY FallingTrigger : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{91c4fbc0-f0d6-4b90-81fe-93c958d6a12d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ftFallingTrigger(CLK := In, Q => bFallingTrigger);
+FallingTrigger := bFallingTrigger;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="In" Id="{38e6612d-c4f4-4e0f-a4ea-d83d9f98eecd}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY In : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{559f91e4-b94e-4738-9826-22c596939736}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF NOT bEnableForce THEN
+	In := bIn;
+ELSE
+	In := bInForced;
+END_IF]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="MR_ResetForceValue" Id="{e2b4a578-5d65-4952-82bd-2175d9340fb3}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_ResetForceValue]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bEnableForce THEN
+	bInForced := FALSE;
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_SetForceValue" Id="{79c40443-22cb-40ff-a385-3d72febf89e3}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_SetForceValue
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bEnableForce THEN
+	bInForced := TRUE;
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="RisingTrigger" Id="{e110483b-491c-42f8-99ac-6a8177cd245c}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY RisingTrigger : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{4725f269-654a-44da-9533-fda36787b607}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[rtRisingTrigger(CLK := In, Q => bRisingTrigger);
+RisingTrigger := bRisingTrigger;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_DigitalInput">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInput.EnableForce.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInput.EnableForce.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInput.FallingTrigger.Get">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInput.In.Get">
+      <LineId Id="3" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInput.MR_ResetForceValue">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInput.MR_SetForceValue">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalInput.RisingTrigger.Get">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

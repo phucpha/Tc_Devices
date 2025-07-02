@@ -1,0 +1,901 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_UniversalCylinder" Id="{40abd967-6e26-4290-a906-c08a3d4d1195}" SpecialFunc="None">
+    <Declaration><![CDATA[(* 
+:Description: This function block is used represent basic cylinder device.
+*)
+FUNCTION_BLOCK ABSTRACT FB_UniversalCylinder IMPLEMENTS I_UniversalCylinder
+VAR
+	bFirstCycle			: BOOL := TRUE;			(* First cycle procedure bit *)
+	sName				: STRING;				(*  *)
+	
+	(* Internal commands *)
+	bInit 				: BOOL;					(* Prepare cylinder to work *)
+	bGoActive 			: BOOL;					(* Move cylinder to active postion *)
+	bGoHome 			: BOOL;					(* Move cylinder to home postion *)
+	bRelease			: BOOL;					(* Release cylinder *)
+	bReset				: BOOL;					(* Reset function block *)
+	bAbort				: BOOL;					(* Deinitialize function block *)
+	bSimulation			: BOOL;					(* Simulation on/off bit *)
+	
+	(* Cylinder state *)
+	bActive				: BOOL;					(*  *)
+	bBusy				: BOOL;					(*  *)	
+	bError 				: BOOL;					(*  *)
+	bPositionActive		: BOOL;					(*  *)
+	bPositionHome		: BOOL;					(*  *)
+	bPositionHold		: BOOL;					(*  *)
+	eErrorID 			: E_CylinderError;		(*  *)
+	eCylinderState		: E_CylinderState;		(* State machine of function block *)
+	eCylinderGoHomeState : E_CylinderStateGo;
+	eCylinderGoActiveState : E_CylinderStateGo;
+	
+	(* Sensors *)
+	piActiveSensor		: FB_DigitalInputExt;	(* Active position sensor function block *)
+	piHomeSensor		: FB_DigitalInputExt;	(* Home position sensor function block *)
+	
+	(* Timers *)
+	tonGoHomeDelay		: TON;					(* Timer on delay when moving to home position *)
+	tonGoActiveDelay	: TON;					(* Timer on delay when moving to active position *)
+	tonMeasurementTimer	: TON;					(* Measurement of movement time *)
+	tonCylinderWatchdog	: TON;					(* Movement watchdog *)
+	
+	(* Time parameters *)
+	tDelay				: TIME := T#100MS;		(* Delay time when moving to any position *)
+	tMeasurement		: TIME := T#60S;		(* Time of movement measurement *)
+
+	tMoveActive			: TIME;					(* Time of last movement to active postion *)
+	tMoveHome			: TIME;					(* Time of last movement to home position *)
+END_VAR
+(*
+Version history:
+
++-------------+------------+----------------+----------+------------------------------------------------------------+
+|Date         | Version    | created under  | Author   | Remark                                                     |
++=============+============+================+==========+============================================================+
+|2021-11      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                                     |
++-------------+------------+----------------+----------+------------------------------------------------------------+
+|2022-01      | 1.1.0.0    | V3.1.4024.22   | ADBO     | Function block changed into base for FB_SingleCoilCylinder |
++-------------+------------+----------------+----------+------------------------------------------------------------+
+|2022-03      | 1.2.0.0    | V3.1.4024.22   | ADBO     | Changed FB_DigitalInput to FB_DigitalInputExt              |
++-------------+------------+----------------+----------+------------------------------------------------------------+
+
+*)
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Initial assignaments *)
+IF bFirstCycle THEN
+	bFirstCycle := FALSE;
+	
+	piHomeSensor.EnableTimeout := TRUE;
+	piActiveSensor.EnableTimeout := TRUE;
+END_IF
+
+(* Simulation enabled*)
+IF bSimulation THEN
+	piHomeSensor.EnableForce := TRUE;
+	piActiveSensor.EnableForce := TRUE;
+	
+	M_SimulationLogic();
+ELSE
+	piHomeSensor.MR_ResetForceValue();
+	piActiveSensor.MR_ResetForceValue();
+	piHomeSensor.EnableForce := FALSE;
+	piActiveSensor.EnableForce := FALSE;
+END_IF
+
+(* Time  measurement - to active position *)
+IF piActiveSensor.RisingTrigger AND eCylinderState = CYLINDER_GO_ACTIVE THEN
+	tMoveActive := tonMeasurementTimer.ET;
+END_IF
+
+(* Time measurement - to home position *)
+IF piHomeSensor.RisingTrigger AND eCylinderState = CYLINDER_GO_HOME THEN
+	tMoveHome := tonMeasurementTimer.ET;
+END_IF
+
+(*  *)
+tonMeasurementTimer(	IN := tonCylinderWatchdog.IN,
+						PT := tMeasurement);
+
+(* State machine - old *)
+StateMachine();
+
+(* Update status flags *)
+bActive := eCylinderState >= CYLINDER_IDLE OR eCylinderState = CYLINDER_ABORTING ;
+//bBusy := eCylinderState > CYLINDER_IDLE;
+bError := piHomeSensor.ErrorTimedout OR piActiveSensor.ErrorTimedout;
+
+(* Error handling *)
+IF piHomeSensor.ErrorTimedout THEN
+	eErrorID := CYLINDER_ERROR_MOVE_HOME_TIMED_OUT;
+	fbMachineLogger.MR_AddLogs(FUN_MergeStrings5(sName,' : Error occured (error ID: ', 'move home timed out', ')', ''));
+
+ELSIF piActiveSensor.ErrorTimedout THEN
+	eErrorID := CYLINDER_ERROR_MOVE_ACTIVE_TIMED_OUT;
+	fbMachineLogger.MR_AddLogs(FUN_MergeStrings5(sName,' : Error occured (error ID: ', 'move active timed out', ')', ''));
+
+ELSE
+	eErrorID := CYLINDER_ERROR_OK;
+	
+END_IF
+
+(* Position flag update *)
+bPositionActive := piActiveSensor.In;
+bPositionHome := piHomeSensor.In;
+
+(* State machine *)
+//StateMachine();
+
+(* Run sensors instances *)
+piHomeSensor();
+piActiveSensor();]]></ST>
+    </Implementation>
+    <Folder Name="FirstCycle" Id="{4594e8e8-d8aa-41f3-bef2-1db47d873afd}" />
+    <Folder Name="Internal" Id="{8c3f7ae1-8d11-47e4-9e3f-de6fef6294b5}" />
+    <Folder Name="Properties" Id="{9a515497-a071-4947-948e-7184ffb8dacd}">
+      <Folder Name="Parameters" Id="{0f848a66-397c-4646-938d-6e8bd36aef40}" />
+      <Folder Name="Status" Id="{b2bcd586-a043-4885-b7c0-86c85fedc141}" />
+    </Folder>
+    <Folder Name="Requests" Id="{68035798-6470-4c7b-b941-f373a273d4db}" />
+    <Folder Name="StateMachine" Id="{057f7856-fcb5-4062-b41f-86193a370dc8}" />
+    <Property Name="Active" Id="{52217ab7-b8f5-4dcd-980f-d98720af50d2}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY Active : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{94816234-375d-481e-a5e9-c1c7ec3cb69a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Active REF= bActive;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ActiveTimeout" Id="{ec421edd-9e51-4b4e-adec-b150ef86f99e}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY ActiveTimeout : TIME
+]]></Declaration>
+      <Get Name="Get" Id="{8c7c3936-926e-42a9-863a-db9cc8c00aa3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ActiveTimeout := piActiveSensor.Timeout;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{89326828-fd15-41ae-b4c2-6ea35b84aaa6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[piActiveSensor.Timeout := ActiveTimeout;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Busy" Id="{c0490004-2885-4004-bd02-3c6710d4f16d}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY Busy : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{07479d26-499a-47b4-b31e-1a63f38d0618}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Busy REF= bBusy;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Delay" Id="{38846b57-ec17-4b7e-80a0-a763a7d23577}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY Delay : TIME
+]]></Declaration>
+      <Get Name="Get" Id="{e3019ce8-9543-497f-b7bc-11891adec9b8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Delay := tDelay;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{33d8a3bb-51b8-4759-95e9-a039997bbff3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[tDelay := Delay;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Error" Id="{c0957047-48ba-44a6-9d1a-d6a64a4fee3c}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY Error : REFERENCE TO BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{8ae2b9c9-2796-42f8-8b9d-3586a2737318}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error REF= bError;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ErrorID" Id="{124f2ae6-0dfa-4102-a4a5-d529ae3477a5}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY ErrorID : REFERENCE TO E_CylinderError
+]]></Declaration>
+      <Get Name="Get" Id="{e540c598-f9e5-4a65-ace4-b97d5246a9cf}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ErrorID REF= eErrorID;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="HomeTimeout" Id="{8e85e04a-64de-4a71-9b4a-c0b513d4a5ec}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY HomeTimeout : TIME]]></Declaration>
+      <Get Name="Get" Id="{c590e3c7-85b0-4923-a8d4-6186a4afbf7e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[HomeTimeout := piHomeSensor.Timeout;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{b864ca1c-24b0-4be5-85ae-aa0fbcaa6620}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[piHomeSensor.Timeout := HomeTimeout;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="M_SimulationLogic" Id="{0e77ba5c-9d33-4943-9dde-753845fb1ed7}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED ABSTRACT M_SimulationLogic
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="MoveActiveTime" Id="{7838c6fb-5b93-4b6f-9f29-f8eea626dcd1}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY MoveActiveTime : REFERENCE TO TIME
+]]></Declaration>
+      <Get Name="Get" Id="{f0fe9e00-3faf-4586-8efc-634fade9b9f6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[MoveActiveTime REF= tMoveActive;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="MoveHomeTime" Id="{6225a250-c9fc-4196-a930-63e1a8de9a09}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY MoveHomeTime : REFERENCE TO TIME
+]]></Declaration>
+      <Get Name="Get" Id="{4b7b0208-0890-4b14-a4c3-7a00919b12e8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[MoveHomeTime REF= tMoveHome;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="MR_Abort" Id="{a1f3ff69-9327-4fca-afbe-7456722cf77c}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Abort : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eCylinderState >= CYLINDER_IDLE THEN
+	bBusy := TRUE;
+	bAbort := TRUE;
+	MR_Abort := FALSE;
+	eCylinderState := CYLINDER_ABORTING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : abort requested'));	
+	
+ELSIF eCylinderState = CYLINDER_UNINITIALIZED THEN
+	bAbort := FALSE;
+	MR_Abort := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : abort done'));	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_FirstCycle" Id="{be997fe0-99a7-412e-87dc-354889ec56ff}" FolderPath="FirstCycle\">
+      <Declaration><![CDATA[METHOD MR_FirstCycle : BOOL
+VAR_INPUT
+	sName 							: STRING;
+	sHomeSensorModuleType			: STRING;
+	sHomeSensorPortID				: STRING;
+	sActiveSensorModuleType			: STRING;
+	sActiveSensorPortID				: STRING;
+	tGoHomeTimeout					: TIME;
+	tGoActiveTimeout				: TIME;
+	tDelay							: TIME;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.sName := sName;								
+THIS^.tDelay := tDelay;
+
+THIS^.piHomeSensor.MR_FirstCycleEx( sName			:= CONCAT(sName,':Home_Sensor'),
+									sModuleType 	:= sHomeSensorModuleType,
+									sPortID			:= sHomeSensorPortID,
+									bEnableTimeout	:= TRUE,
+									tDefaultTimeout	:= tGoHomeTimeout);
+									
+THIS^.piActiveSensor.MR_FirstCycleEx( 	sName			:= CONCAT(sName,':Active_Sensor'),
+										sModuleType 	:= sActiveSensorModuleType,
+										sPortID			:= sActiveSensorPortID,
+										bEnableTimeout	:= TRUE,
+										tDefaultTimeout	:= tGoActiveTimeout);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_GoActive" Id="{e11f8650-9f68-4c45-baf9-1cef63d72552}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_GoActive : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eCylinderState = CYLINDER_IDLE AND NOT piActiveSensor.In THEN
+	bBusy := TRUE;
+	bGoActive := TRUE;
+	MR_GoActive := FALSE;
+	eCylinderState := CYLINDER_GO_ACTIVE;
+	eCylinderGoActiveState := CYLINDER_MOVE_START_TRACKING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : active position requested'));	
+	
+	
+ELSIF eCylinderState = CYLINDER_GO_ACTIVE_DONE THEN
+	bGoActive := FALSE;
+	MR_GoActive := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : active position done'));		
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_GoHome" Id="{840fe54c-271c-4df4-9d53-45854aae802f}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_GoHome : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eCylinderState = CYLINDER_IDLE AND NOT piHomeSensor.In THEN
+	bBusy := TRUE;
+	bGoHome := TRUE;
+	MR_GoHome := FALSE;
+	eCylinderState := CYLINDER_GO_HOME;
+	eCylinderGoHomeState := CYLINDER_MOVE_START_TRACKING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : home position requested'));	
+	
+ELSIF eCylinderState = CYLINDER_GO_HOME_DONE THEN
+	bGoHome := FALSE;
+	MR_GoHome := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : home position done'));	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Init" Id="{f47709de-40d8-4520-8481-a2d1dc82ebed}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Init : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eCylinderState = CYLINDER_UNINITIALIZED THEN
+	bBusy := TRUE;
+	bInit := TRUE;
+	MR_Init := FALSE;
+	eCylinderState := CYLINDER_INITIALIZING;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : initialization requested'));	
+	
+ELSIF eCylinderState = CYLINDER_IDLE THEN
+	bInit := FALSE;
+	MR_Init := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : initialization done'));	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Release" Id="{a6729b03-ee31-4751-9d26-b9ac250df565}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Release : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eCylinderState = CYLINDER_IDLE AND bPositionHold THEN
+	bBusy := TRUE;
+	bRelease := TRUE;
+	MR_Release := FALSE;
+	eCylinderState := CYLINDER_RELEASE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : release requested'));	
+	
+ELSIF eCylinderState = CYLINDER_RELEASE_DONE THEN	
+	bRelease := FALSE;
+	MR_Release := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : release done'));
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Reset" Id="{d8ea48c7-14da-4082-9e3e-837ec96d4be0}" FolderPath="Requests\">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eCylinderState >= CYLINDER_IDLE AND bError THEN
+	bBusy := TRUE;
+	bReset := TRUE;
+	MR_Reset := FALSE;
+	eCylinderState := CYLINDER_RESET;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : reset requested'));	
+	
+ELSIF eCylinderState = CYLINDER_RESET_DONE THEN
+	bReset := FALSE;
+	MR_Reset := TRUE;
+	fbMachineLogger.MR_AddLogs(CONCAT(sName,' : reset done'));		
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Aborting" Id="{5b0e58b9-0ec0-4e2a-b5c0-8469e05bfe1c}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED  MS_Aborting]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piHomeSensor.MR_Abort();
+piActiveSensor.MR_Abort();
+
+IF NOT piHomeSensor.Active AND NOT piActiveSensor.Active THEN
+	//bBusy := FALSE;
+	eCylinderState := CYLINDER_UNINITIALIZED;	
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_GoActive" Id="{2c977bfb-6a6e-4943-96a4-75c5c10e2412}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED ABSTRACT MS_GoActive
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_GoActiveDone" Id="{cf6ea0c9-c5cd-4d02-ac58-c72a19f1eacd}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_GoActiveDone
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bGoActive THEN
+	bBusy := FALSE;
+	eCylinderState := CYLINDER_IDLE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_GoHome" Id="{bbcde1f2-9c0a-46f6-bf69-8df480db981f}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED ABSTRACT MS_GoHome
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_GoHomeDone" Id="{0f04ac49-8c26-4543-9ac0-4492c37acc13}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_GoHomeDone
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bGoHome THEN
+	bBusy := FALSE;
+	eCylinderState := CYLINDER_IDLE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Idle" Id="{7063c9bb-d01f-4fa8-bea0-8f2d568660bf}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Idle
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Initializing" Id="{9f955d6a-7694-43a8-a3b6-1b1d7b0a4488}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Initializing
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piHomeSensor.MR_Init();
+piActiveSensor.MR_Init();
+
+piHomeSensor.EnableTimeout := TRUE;
+piActiveSensor.EnableTimeout := TRUE;
+
+IF piHomeSensor.Active AND piActiveSensor.Active THEN
+	eCylinderState := CYLINDER_READY_INITIALIZED;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ReadyInitialized" Id="{4f20acb8-7343-4f25-a364-ab9657e2b44b}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ReadyInitialized
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bBusy := FALSE;
+eCylinderState := CYLINDER_IDLE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Release" Id="{430cd171-935e-4dd4-8396-b9fea31f9b4f}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED ABSTRACT MS_Release
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ReleaseDone" Id="{9d10e5af-8a07-447e-a41b-b32fd718cce0}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ReleaseDone
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bRelease THEN
+	bBusy := FALSE;
+	eCylinderState := CYLINDER_IDLE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Reset" Id="{a3d65173-d2bd-4fde-8545-56271a75905c}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Reset
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bInit 		:= FALSE;
+bGoActive 	:= FALSE;
+bGoHome 	:= FALSE;
+bRelease	:= FALSE;
+bAbort		:= FALSE;
+
+tonGoHomeDelay(IN := FALSE);
+tonGoActiveDelay(IN := FALSE);
+tonMeasurementTimer(IN:= FALSE);
+
+piHomeSensor.MR_Reset();
+piActiveSensor.MR_Reset();
+
+IF NOT piHomeSensor.ErrorTimedout AND NOT piActiveSensor.ErrorTimedout THEN
+	eCylinderState := CYLINDER_RESET_DONE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ResetDone" Id="{48e98fb2-6c6d-4007-8d95-ed157cbc3f20}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bReset THEN
+	bBusy := FALSE;
+	eCylinderState := CYLINDER_IDLE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Uninitialized" Id="{df3bfc05-6ae9-4d64-a696-d4467c04c045}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Uninitialized
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bError := FALSE;
+bBusy := FALSE;
+
+piHomeSensor.EnableForce := FALSE;
+piActiveSensor.EnableForce := FALSE;
+
+piHomeSensor.EnableTimeout := FALSE;
+piActiveSensor.EnableTimeout := FALSE;
+
+bInit 		:= FALSE;
+bGoActive 	:= FALSE;
+bGoHome 	:= FALSE;
+bRelease	:= FALSE;
+bReset		:= FALSE;
+bAbort		:= FALSE;
+
+tonGoHomeDelay(IN := FALSE);
+tonGoActiveDelay(IN := FALSE);
+tonMeasurementTimer(IN:= FALSE);]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Name" Id="{20488872-0ee4-42e5-869b-fb4bb8c8fc60}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{a76f8e58-0c20-4f33-98fd-7543a03eba40}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name := sName;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{1b238ef2-f3df-43c0-9226-f6957513f872}">
+        <Declaration><![CDATA[
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[sName := Name;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="PositionActive" Id="{36e41f62-3233-4cd5-badd-23c7e4532f6b}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY PositionActive : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{e2392c1c-7776-46ab-b6e9-b8357626ef7c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PositionActive REF= bPositionActive;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="PositionHold" Id="{197063dc-c14b-4b4f-9c81-9b753adf36f7}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY PositionHold : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{613bfc12-2b9a-4319-ae14-68414d3cacf8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PositionHold REF= bPositionHold;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="PositionHome" Id="{3ec6d09a-985c-4545-8f9a-ba46bfc59b79}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY PositionHome : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{d639eaa5-d0f1-443a-a3bc-47f03d0a6f50}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PositionHome REF= bPositionHome;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ref_piActiveSensor" Id="{cbd2f6e7-c610-4665-b0c6-94f4d41e79ac}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY ref_piActiveSensor : REFERENCE TO FB_DigitalInputExt]]></Declaration>
+      <Get Name="Get" Id="{40e3e84a-6809-4dac-b1aa-89f9bed4344b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_piActiveSensor REF= piActiveSensor;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ref_piHomeSensor" Id="{e736eb56-2e23-4ccc-be2a-0c6da0da3e73}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY ref_piHomeSensor : REFERENCE TO FB_DigitalInputExt]]></Declaration>
+      <Get Name="Get" Id="{77b7cd71-cfcf-4a4e-94e0-91bafda9d462}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_piHomeSensor REF= piHomeSensor;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Simulation" Id="{0bf3342e-5392-4378-8fb4-482c3874de8f}" FolderPath="Properties\Parameters\">
+      <Declaration><![CDATA[PROPERTY Simulation : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{0f5f6b19-817d-44fe-a632-e4c63ea582de}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Simulation := bSimulation;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{e9b1e188-e94f-4f0e-a444-5349c2c04ba0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[bSimulation := Simulation;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="State" Id="{523c2536-1cd9-4b11-b5a1-4cdfc2759739}" FolderPath="Properties\Status\">
+      <Declaration><![CDATA[PROPERTY State : REFERENCE TO E_CylinderState
+]]></Declaration>
+      <Get Name="Get" Id="{5759685b-44c3-4a43-9de5-b4695ddd20ad}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[State REF= eCylinderState;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="StateMachine" Id="{7c53de1c-8e76-4383-ba47-02a972088202}" FolderPath="StateMachine\">
+      <Declaration><![CDATA[METHOD PROTECTED StateMachine
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eCylinderState OF
+	CYLINDER_UNINITIALIZED:
+		MS_Uninitialized();
+		
+	CYLINDER_INITIALIZING:
+		MS_Initializing();
+	
+	CYLINDER_READY_INITIALIZED:
+		MS_ReadyInitialized();
+		
+	CYLINDER_IDLE:
+		MS_Idle();
+		
+	CYLINDER_GO_HOME:
+		MS_GoHome();
+		
+	CYLINDER_GO_HOME_DONE:
+		MS_GoHomeDone();
+		
+	CYLINDER_GO_ACTIVE:
+		MS_GoActive();
+		
+	CYLINDER_GO_ACTIVE_DONE:
+		MS_GoActiveDone();
+		
+	CYLINDER_RELEASE:
+		MS_Release();
+		
+	CYLINDER_RELEASE_DONE:
+		MS_ReleaseDone();
+		
+	CYLINDER_RESET:
+		MS_Reset();
+		
+	CYLINDER_RESET_DONE:
+		MS_ResetDone();
+		
+	CYLINDER_ABORTING:
+		MS_Aborting();
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_UniversalCylinder">
+      <LineId Id="3" Count="65" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Active.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.ActiveTimeout.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.ActiveTimeout.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Busy.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Delay.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Delay.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Error.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.ErrorID.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.HomeTimeout.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.HomeTimeout.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.M_SimulationLogic">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MoveActiveTime.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MoveHomeTime.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MR_Abort">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MR_FirstCycle">
+      <LineId Id="3" Count="2" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="8" Count="2" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MR_GoActive">
+      <LineId Id="3" Count="13" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MR_GoHome">
+      <LineId Id="3" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MR_Init">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MR_Release">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MR_Reset">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_Aborting">
+      <LineId Id="3" Count="6" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_GoActive">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_GoActiveDone">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_GoHome">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_GoHomeDone">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_Idle">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_Initializing">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_ReadyInitialized">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_Release">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_ReleaseDone">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_Reset">
+      <LineId Id="3" Count="14" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_ResetDone">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.MS_Uninitialized">
+      <LineId Id="3" Count="17" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.PositionActive.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.PositionHold.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.PositionHome.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.ref_piActiveSensor.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.ref_piHomeSensor.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Simulation.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.Simulation.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.State.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UniversalCylinder.StateMachine">
+      <LineId Id="3" Count="39" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

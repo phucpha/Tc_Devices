@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_DigitalDevice" Id="{91192233-2028-49cf-ab12-85fcaeefeda5}" SpecialFunc="None">
+    <Declaration><![CDATA[(* 
+:Description: This function block is base for all other digital devices.
+*)
+FUNCTION_BLOCK ABSTRACT FB_DigitalDevice IMPLEMENTS I_DigitalDevice
+VAR
+	sName : STRING; (* Name of digital device instance *)
+	sModuleType : STRING;
+	sPortID		: STRING;
+END_VAR
+(*
+Version history:
+
++-------------+------------+----------------+----------+------------------------------------------+
+|Date         | Version    | created under  | Author   | Remark                                   |
++=============+============+================+==========+==========================================+
+|2022-01      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                   |
++-------------+------------+----------------+----------+------------------------------------------+
+
+*)]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="FirstCycle" Id="{1c8c5f98-209a-402e-9e88-cc7599942cf8}" />
+    <Folder Name="Properties" Id="{e6f14551-760e-41fc-b0cf-38d01aae9c89}" />
+    <Property Name="ModuleType" Id="{6581fad5-7877-4e69-9424-376f13cdba42}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY ModuleType : REFERENCE TO STRING]]></Declaration>
+      <Get Name="Get" Id="{f7811120-40e2-4b3a-bb81-b54e68f6afa0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ModuleType REF= sModuleType;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="MR_FirstCycle" Id="{1cf68bcf-6260-4706-8c9b-4da8df45299d}" FolderPath="FirstCycle\">
+      <Declaration><![CDATA[METHOD MR_FirstCycle : BOOL
+VAR_INPUT
+	sName : STRING;
+	sModuleType : STRING;
+	sPortID		: STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.sName := sName;
+THIS^.sModuleType := sModuleType;
+THIS^.sPortID := sPortID;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Name" Id="{4fbc2781-2f66-4ab0-9f22-21b3974ee3e2}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Name : REFERENCE TO STRING
+]]></Declaration>
+      <Get Name="Get" Id="{af7b7a66-6c11-44b1-b409-95b6ec8f7e03}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name REF= sName;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="PortID" Id="{af872da2-e47c-41ef-a147-62aeb27290ab}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PortID : REFERENCE TO STRING]]></Declaration>
+      <Get Name="Get" Id="{607b2655-6aef-4ce3-bf96-e041389e65b1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PortID REF= sPortID;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_DigitalDevice">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalDevice.ModuleType.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalDevice.MR_FirstCycle">
+      <LineId Id="4" Count="0" />
+      <LineId Id="11" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_DigitalDevice.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_DigitalDevice.PortID.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,797 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_BurnerControlEcoFlam" Id="{88a4ffff-4393-4d36-8255-c49816de1886}" SpecialFunc="None">
+    <Declaration><![CDATA[(* This function use for BurnerControlEcoFlam dont have Reset components
+*)
+FUNCTION_BLOCK FB_BurnerControlEcoFlam IMPLEMENTS I_BurnerControlEcoFlam
+
+VAR
+	piFault	: FB_DigitalInput;
+	piFireSussess : FB_DigitalInputExt;
+	ifActivePower : I_ActivePower;					//have FB
+	ifActivePowerNoFB : I_ActivePowerNoFB;
+	eActivePowerType : E_ActivePowerType;
+	eState	: E_EcoFlamState;
+	bAbort: BOOL;
+	bBusy: BOOL;
+	bInit: BOOL;
+	bReset: BOOL;
+	bStop: BOOL;
+	bError : BOOL;
+	tMeasurement	: TIME := T#200S;
+	bIgnition: BOOL;
+	bIgnitioned: BOOL;
+	tonMeasurementTimer: Ton;
+	tBurnSuccess: TIME;
+	sName : STRING;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[bError := piFault.In; //OR piFireSussess.ErrorTimedout;
+piFireSussess();
+StateMachine();
+tonMeasurementTimer(PT := tMeasurement);
+IF piFireSussess.RisingTrigger AND eState = ECOFLAM_IGNITION THEN
+	tBurnSuccess	:= 	tonMeasurementTimer.ET;				
+END_IF]]></ST>
+    </Implementation>
+    <Folder Name="Internal" Id="{f26a0759-c8bf-493c-864a-44e8b610bce1}" />
+    <Folder Name="Properties" Id="{a2727e65-94e4-494e-9e3d-2cd8c9e1e5a1}" />
+    <Folder Name="Request" Id="{81afbd00-65cb-4926-838a-d602e3a1ed61}" />
+    <Property Name="ActivePowerType" Id="{d9badd35-a76a-476f-bed8-2ef6932be687}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY ActivePowerType : Reference to E_ActivePowerType]]></Declaration>
+      <Get Name="Get" Id="{91a63427-0abe-49a7-a4c8-600b2d1183b5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ActivePowerType ref= eActivePowerType;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Busy" Id="{fef0549e-1f99-4a56-ac1c-5f5b496a688e}" FolderPath="Properties\">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'variable'}
+PROPERTY Busy : reference to bool]]></Declaration>
+      <Get Name="Get" Id="{5f87b202-0648-4783-bd0c-e6dd9d5246e1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Busy ref= bBusy;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Error" Id="{1292a722-8fad-4cb4-8af9-bc6a89fba151}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Error : REFERENCE to bool]]></Declaration>
+      <Get Name="Get" Id="{8d356e25-bf04-40e5-8279-0e1f0e525a86}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[error REF= bError;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="IgnitionSucess" Id="{34b96f87-b0ab-4802-bed2-5c8e059abd23}" FolderPath="Properties\">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'variable'}
+PROPERTY IgnitionSucess : bool]]></Declaration>
+      <Get Name="Get" Id="{3a7d24d9-82de-4909-8b4b-de5975f43f67}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IgnitionSucess := piFireSussess.In;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="IsStop" Id="{f5f1fb6b-1e47-4c5e-b372-bbc55886a0c6}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY IsStop : bool]]></Declaration>
+      <Get Name="Get" Id="{0981c464-f7c3-4ed6-9bbb-d69c78ebaff5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CASE eActivePowerType OF
+	ACTIVE_POWER_TYPE_NO_FEEDBACK:
+		isStop := NOT ifActivePowerNoFB.Powered;
+		
+	ACTIVE_POWER_TYPE_FEEDBACK:
+		isStop := NOT ifActivePower.Powered;
+END_CASE
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="MR_Abort" Id="{1f1cc6f1-0a14-4d5f-b2ff-67ddc8a3b880}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Abort : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState >= ECOFLAM_INITIALIZING THEN
+	bAbort := TRUE;
+	bBusy := TRUE;
+	MR_Abort := FALSE;
+	eState := ECOFLAM_ABORTING;
+ELSIF eState = ECOFLAM_UNINITIALIZED THEN
+	bAbort := FALSE;
+	bBusy := FALSE;
+	MR_Abort := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_AppendPowerOn" Id="{0ed5ced2-0827-4e45-b64a-410e2eb14889}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_AppendPowerOn : BOOL
+VAR_INPUT
+	iPowerON	: I_ActivePower;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF THIS^.ifActivePower <> iPowerON THEN
+	THIS^.ifActivePower := iPowerON;
+	MR_AppendPowerOn := true;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_AppendPowerOnNoFB" Id="{854162b0-71e4-48c5-bf1a-0aa214361348}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_AppendPowerOnNoFB : BOOL
+VAR_INPUT
+	iPowerOnNoFB	: I_ActivePowerNoFB;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF THIS^.ifActivePowerNoFB <> iPowerOnNoFB THEN
+	THIS^.ifActivePowerNoFB := iPowerOnNoFB;
+	MR_AppendPowerOnNoFB := true;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_ChooseIfActivePowerType" Id="{a1c802e6-0c05-4e5e-8272-911357a7f46d}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_ChooseIfActivePowerType : BOOL
+VAR_INPUT
+	eChoseActivePowerType : E_ActivePowerType;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[eActivePowerType := eChoseActivePowerType;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_FirstCycle" Id="{675c34c3-dfa8-4d52-b1c0-aa64a4ad7181}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_FirstCycle : BOOL
+VAR_INPUT
+	sName 							: STRING;
+	sPiFireSuccessModuleType		: STRING;
+	sPiFirePortID					: STRING;
+	sPiFaultModuleType				: STRING;
+	sPiFaultPortID					: STRING;
+	tONBurnerTimeOut				: TIME;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.sName := sName;
+THIS^.piFireSussess.MR_FirstCycleEx(
+ 	sName			:= CONCAT(sName,':FireSuccess SS'),
+	sModuleType 	:= sPiFireSuccessModuleType,
+	sPortID			:= sPiFirePortID,
+	bEnableTimeout	:= TRUE,
+	tDefaultTimeout	:= tONBurnerTimeOut
+);
+										
+THIS^.piFault.MR_FirstCycle(
+	sName := CONCAT(sName,':Fault SS'),
+	sModuleType := sPiFaultModuleType,
+	sPortID := sPiFaultPortID
+);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Ignition" Id="{49a25cbf-788a-4dc3-a129-f90e295a4b26}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Ignition : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState =  ECOFLAM_READY_INITIALIZED AND NOT piFireSussess.In THEN
+ 	bIgnition	:= TRUE;
+	MR_Ignition := FALSE;
+	bIgnitioned	:= FALSE;
+	eState := ECOFLAM_IGNITION;
+	bBusy := TRUE;
+ELSIF eState = ECOFLAM_IGNITION_DONE THEN
+	bIgnition := FALSE;
+	bIgnitioned	:= TRUE;
+	MR_Ignition := TRUE;
+	bBusy := false	;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Init" Id="{b73be3d0-0d4d-418a-928d-8354a1d399c2}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD  MR_Init : bool // just Acknowledge already append the I_activepower
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState = ECOFLAM_UNINITIALIZED THEN
+	bInit := TRUE;
+	bBusy := TRUE;
+	MR_Init := FALSE;
+	eState := ECOFLAM_INITIALIZING;
+ELSIF eState = ECOFLAM_READY_INITIALIZED THEN
+	bInit := FALSE;
+	MR_Init := TRUE;
+	bBusy := false;
+END_IF ]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Reset" Id="{564484dd-2718-4a6c-acb9-7a78af28f67d}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState >= ECOFLAM_READY_INITIALIZED AND bError THEN
+	bBusy := TRUE;
+	bReset := TRUE;
+	MR_Reset := FALSE;
+	eState := ECOFLAM_RESET;
+ELSIF eState = ECOFLAM_RESET_DONE THEN
+	bBusy := TRUE;
+	bReset := FALSE;
+	MR_Reset := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Stop" Id="{e2d68bec-bb32-4b9d-b877-becb5ffec602}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Stop : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eActivePowerType OF
+	ACTIVE_POWER_TYPE_NO_FEEDBACK:
+		IF eState >= ECOFLAM_INITIALIZING 
+			AND eState < ECOFLAM_STOP_DONE 
+			AND ifActivePowerNoFB.Powered  
+		THEN
+			bStop := true;
+			MR_Stop := FALSE;
+			bBusy := TRUE;
+			eState := ECOFLAM_STOP;
+		ELSIF eState = ECOFLAM_STOP_DONE THEN
+			bStop := FALSE;
+			MR_Stop := TRUE;
+			bBusy := false;
+		END_IF 
+	ACTIVE_POWER_TYPE_FEEDBACK:
+		IF eState >= ECOFLAM_INITIALIZING 
+			AND eState < ECOFLAM_STOP_DONE 
+			AND ifActivePower.Powered  
+		THEN
+			bStop := true;
+			MR_Stop := FALSE;
+			bBusy := TRUE;
+			eState := ECOFLAM_STOP;
+		ELSIF eState = ECOFLAM_STOP_DONE THEN
+			bStop := FALSE;
+			MR_Stop := TRUE;
+			bBusy := false;
+		END_IF 
+END_CASE
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Aborting" Id="{a07ebe05-4cbc-43cb-8e7f-81ee4594d53b}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED  MS_Aborting]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eActivePowerType OF
+	ACTIVE_POWER_TYPE_NO_FEEDBACK:
+		ifActivePowerNoFB.MR_PowerOFF();
+		piFireSussess.MR_Abort();
+		IF NOT piFireSussess.Active THEN
+			eState := ECOFLAM_UNINITIALIZED;
+		END_IF
+		
+	ACTIVE_POWER_TYPE_FEEDBACK:
+		ifActivePower.MR_PowerOFF();
+		piFireSussess.MR_Abort();
+		IF NOT ifActivePower.Powered 
+			AND NOT ifActivePower.Busy 
+			AND NOT piFireSussess.Active
+		THEN
+			eState := ECOFLAM_UNINITIALIZED;
+		END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Idle" Id="{849a6547-23c4-4948-8ef8-aef7f4745e6b}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Idle
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Ignition" Id="{91633012-c724-40b7-94f9-37b2aa1a449f}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Ignition
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eActivePowerType OF
+	ACTIVE_POWER_TYPE_NO_FEEDBACK:
+		ifActivePowerNoFB.MR_PowerON();
+		piFireSussess.MR_StartTracking();
+		tonMeasurementTimer.IN := TRUE;
+		IF piFireSussess.In  THEN
+			eState := ECOFLAM_IGNITION_DONE;
+		END_IF
+		
+	ACTIVE_POWER_TYPE_FEEDBACK:
+		ifActivePower.MR_PowerON();
+		piFireSussess.MR_StartTracking();
+		tonMeasurementTimer.IN := TRUE;
+		IF ifActivePower.Powered AND NOT ifActivePower.Busy 
+		AND  piFireSussess.In  THEN
+			eState := ECOFLAM_IGNITION_DONE;
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_IgnitionDone" Id="{fcded8cd-1c5d-4265-8ef9-ee72d739d61a}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_IgnitionDone : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[tonMeasurementTimer.IN := false;
+IF NOT bIgnition THEN
+	eState :=  ECOFLAM_READY_INITIALIZED;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Initializing" Id="{c1a3196a-3075-45ae-936b-345730e3d6c3}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Initializing
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piFireSussess.MR_Init();
+piFireSussess.EnableTimeout := TRUE;
+
+CASE eActivePowerType OF
+	ACTIVE_POWER_TYPE_NO_FEEDBACK:
+		IF ifActivePowerNoFB <> 0
+			AND piFireSussess.Active
+		THEN
+			eState := ECOFLAM_READY_INITIALIZED;
+		END_IF
+		
+	ACTIVE_POWER_TYPE_FEEDBACK:
+		IF ifActivePower <> 0
+			AND piFireSussess.Active
+		THEN
+			eState := ECOFLAM_READY_INITIALIZED;
+		END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ReadyInitialized" Id="{e01c8096-984a-42e6-80c7-cd403967703e}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ReadyInitialized
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Reset" Id="{f309786a-9283-48f2-8453-d373c50cfc8c}" FolderPath="Internal\">
+      <Declaration><![CDATA[// not have reset in this type burner so Reset not work
+METHOD PROTECTED MS_Reset
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piFireSussess.MR_Reset();
+bInit 		:= FALSE;
+bAbort		:= FALSE;
+bIgnition 	:= FALSE;
+bStop 		:= FALSE;
+IF NOT bError
+	AND NOT	piFireSussess.ErrorTimedout
+THEN
+	eState := ECOFLAM_RESET_DONE;
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ResetDone" Id="{178e8192-b755-4c98-ac23-a5d8e796114c}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bReset THEN
+	eState := ECOFLAM_READY_INITIALIZED;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Stop" Id="{0427a35e-52cf-4579-b5b6-38d6e9db201d}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD protected MS_Stop 
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eActivePowerType OF
+	ACTIVE_POWER_TYPE_NO_FEEDBACK:
+		ifActivePowerNoFB.MR_PowerOFF();
+		eState := ECOFLAM_STOP_DONE;
+		
+	ACTIVE_POWER_TYPE_FEEDBACK:
+		ifActivePower.MR_PowerOFF();
+		IF NOT ifActivePower.Powered AND not ifActivePower.Busy THEN
+			eState := ECOFLAM_STOP_DONE;
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Ms_StopDone" Id="{7edb9d39-a958-4e60-a247-b79d4f8bd4e2}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD protected Ms_StopDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bStop THEN
+	eState := ECOFLAM_READY_INITIALIZED;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Uninitialized" Id="{cfae14a1-1329-4d0a-b581-62d0426a1451}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Uninitialized
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bError := FALSE;
+bBusy := FALSE;
+
+piFireSussess.EnableForce := FALSE;
+piFireSussess.EnableTimeout := FALSE;
+
+bInit 		:= FALSE;
+bReset		:= FALSE;
+bAbort		:= FALSE;
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Name" Id="{e896ae50-e3d1-4588-b4af-4158a7bc28a6}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Name : string]]></Declaration>
+      <Get Name="Get" Id="{59f9f528-157a-4d80-9ac5-1503c993dcca}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name := sName;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{ab4d986b-3ca0-4d87-8bf0-c0f77b5e2bc3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[sName := Name;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Ref_IfActivePower" Id="{a332cb4a-3c3c-4e12-942d-2f2c9a5f5fe6}">
+      <Declaration><![CDATA[PROPERTY Ref_IfActivePower : REFERENCE TO I_ActivePower]]></Declaration>
+      <Get Name="Get" Id="{db58f3bc-0ca6-4727-b5d0-cfda39ecc22d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_IfActivePower ref= ifActivePower;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_IfActivePowerNoFB" Id="{4e7021cf-5bd8-4dc9-9752-e0985fa2850d}">
+      <Declaration><![CDATA[PROPERTY Ref_IfActivePowerNoFB : REFERENCE TO I_ActivePowerNoFB]]></Declaration>
+      <Get Name="Get" Id="{f7a8eed8-d0fa-4a64-b764-348ec7937ff5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_IfActivePowerNoFB ref= ifActivePowerNoFB;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_piFault" Id="{7257d8a2-cf6d-41d9-b51a-05975eb8a988}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Ref_piFault : reference to  FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{bdef0ba5-b065-4461-84d0-2f6ce92c5c44}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_piFault ref= piFault;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_piIgnitionSucess" Id="{f2931f18-cca9-4eb3-bf1b-a96e57bdf70d}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Ref_piIgnitionSucess : reference to  FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{6264c58a-ea7e-4735-9bd0-b2e41557bb44}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_piIgnitionSucess ref= piFireSussess;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="State" Id="{7ca2aba7-6ae1-4c02-9a13-353f42db7c21}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY State : E_EcoFlamState]]></Declaration>
+      <Get Name="Get" Id="{c815f0b1-e767-4975-80bb-0430a1e3c989}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[State := eState;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="StateMachine" Id="{9e4cfa2d-a6f0-499c-b27d-c1b8dc36dcaa}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED StateMachine
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eState OF
+	ECOFLAM_UNINITIALIZED :
+		MS_Uninitialized();
+		
+	ECOFLAM_INITIALIZING	:
+		MS_Initializing();
+		
+	ECOFLAM_READY_INITIALIZED :
+		MS_ReadyInitialized();
+		
+	ECOFLAM_IGNITION	:
+		MS_Ignition();
+		
+	ECOFLAM_IGNITION_DONE	:
+		MS_IgnitionDone();
+		
+	ECOFLAM_STOP		:
+		MS_Stop();
+		
+	ECOFLAM_STOP_DONE	:
+		Ms_StopDone();
+		
+	ECOFLAM_RESET	:
+		MS_Reset();
+		
+	ECOFLAM_RESET_DONE	:
+		MS_ResetDone();
+		
+	ECOFLAM_ABORTING :
+		MS_Aborting();
+	
+	
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_BurnerControlEcoFlam">
+      <LineId Id="24" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="50" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.ActivePowerType.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Busy.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Error.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.IgnitionSucess.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.IsStop.Get">
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_Abort">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="13" Count="3" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_AppendPowerOn">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_AppendPowerOnNoFB">
+      <LineId Id="7" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_ChooseIfActivePowerType">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_FirstCycle">
+      <LineId Id="29" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="7" Count="2" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="33" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_Ignition">
+      <LineId Id="5" Count="2" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_Init">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="2" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="12" Count="2" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_Reset">
+      <LineId Id="5" Count="1" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="11" Count="2" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_Stop">
+      <LineId Id="29" Count="1" />
+      <LineId Id="47" Count="11" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="34" Count="11" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_Aborting">
+      <LineId Id="13" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="23" Count="2" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="17" Count="4" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="15" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_Idle">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_Ignition">
+      <LineId Id="29" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="41" Count="3" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="5" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_IgnitionDone">
+      <LineId Id="14" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_Initializing">
+      <LineId Id="71" Count="2" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="64" Count="3" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="56" Count="3" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="51" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_ReadyInitialized">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_Reset">
+      <LineId Id="13" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="34" Count="1" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_ResetDone">
+      <LineId Id="6" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_Stop">
+      <LineId Id="22" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="26" Count="2" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="17" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Ms_StopDone">
+      <LineId Id="10" Count="0" />
+      <LineId Id="14" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_Uninitialized">
+      <LineId Id="4" Count="3" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="17" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Ref_IfActivePower.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Ref_IfActivePowerNoFB.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Ref_piFault.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Ref_piIgnitionSucess.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.State.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.StateMachine">
+      <LineId Id="107" Count="31" />
+      <LineId Id="45" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

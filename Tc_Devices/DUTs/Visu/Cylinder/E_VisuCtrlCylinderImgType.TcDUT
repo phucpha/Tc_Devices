@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_VisuCtrlCylinderImgType" Id="{6c1cb46f-de04-4dbc-9325-1c5b0215b1e9}">
+    <Declaration><![CDATA[{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_VisuCtrlCylinderImgType :
+(
+	CYLINDER_TYPE_SINGLE_COIL := -0,	(*  *)
+	CYLINDER_TYPE_DOUBLE_COIL := 10		(*  *)
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
