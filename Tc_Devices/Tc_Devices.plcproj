@@ -246,7 +246,6 @@
     <Folder Include="VISUs\Images" />
     <Folder Include="VISUs\Images\Cylinders" />
     <Folder Include="VISUs\Manual" />
-    <Folder Include="VISUs\Manual\Images" />
     <Folder Include="VISUs\Pages" />
     <Folder Include="VISUs\Single" />
     <Folder Include="VISUs\Text Lists" />

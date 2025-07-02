@@ -4,16 +4,16 @@
     <XmlArchive>
       <Data>
         <o xml:space="preserve" t="ImagePoolObject">
-          <v n="UniqueIdGenerator">"10"</v>
+          <v n="UniqueIdGenerator">"12"</v>
           <l n="BitmapPool" t="ArrayList" cet="ImagePoolItem">
             <o>
               <v n="BitmapID">"CYLINDER_TYPE_SINGLE_COIL"</v>
-              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|VISUs\Manual\Images\Cylinders\SingleCoilCylinder.svg"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|VISUs\Images\Cylinders\SingleCoilCylinder.svg"</v>
               <v n="ItemID">8</v>
             </o>
             <o>
               <v n="BitmapID">"CYLINDER_TYPE_DOUBLE_COIL"</v>
-              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|VISUs\Manual\Images\Cylinders\DoubleCoilCylinder.svg"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|VISUs\Images\Cylinders\DoubleCoilCylinder.svg"</v>
               <v n="ItemID">9</v>
             </o>
             <o>
