@@ -13,6 +13,17 @@ END_VAR]]></Declaration>
       <ST><![CDATA[bPowered := poCoil.Out;
 bOverload :=  piFR.In;]]></ST>
     </Implementation>
+    <Property Name="IsOverload" Id="{d1f79765-5ea1-417c-ab92-3f7e5d28c481}">
+      <Declaration><![CDATA[PROPERTY IsOverload : REFERENCE to bool]]></Declaration>
+      <Get Name="Get" Id="{369760a0-3838-4cc3-b35f-2b8a00e21a41}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[isOverload ref= bOverload;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="MR_PowerOFF" Id="{f586367f-63e8-4000-9264-0308e5e1e7c9}">
       <Declaration><![CDATA[METHOD MR_PowerOFF : BOOL
 VAR_INPUT
@@ -44,9 +55,56 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Property Name="PowerOffIsCalled" Id="{f4d29c3a-e2e0-4255-bb91-f7f85b18af44}">
+      <Declaration><![CDATA[PROPERTY PowerOffIsCalled : bool]]></Declaration>
+      <Get Name="Get" Id="{a32138f6-16f5-45e1-88d6-e1b9f9364882}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerOffIsCalled := poCoil.Out=FALSE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="PowerOnIsCalled" Id="{b5a9fd27-9adb-442c-b74a-4e5f2de99305}">
+      <Declaration><![CDATA[PROPERTY PowerOnIsCalled : bool]]></Declaration>
+      <Get Name="Get" Id="{19fd6cd3-c798-4dbe-a900-370b14c9c952}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerOnIsCalled := poCoil.Out=TRUE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_piFR" Id="{d234bb82-4ae6-4d81-adbc-70191f4585c5}">
+      <Declaration><![CDATA[PROPERTY Ref_piFR : reference to FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{fde14fd9-1542-45b8-99cc-b7fc2cf0af94}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_piFR ref= piFR;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_poCoil" Id="{f448b09b-740d-4081-992d-9df83dad2ffa}">
+      <Declaration><![CDATA[PROPERTY Ref_poCoil : reference to fb_digitalOutput]]></Declaration>
+      <Get Name="Get" Id="{7906f1d6-582f-4f12-89e8-0e51f0d8257c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_poCoil ref= poCoil;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <LineIds Name="FB_ContactorNonFB_ThermalRelay">
       <LineId Id="22" Count="0" />
       <LineId Id="15" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay.IsOverload.Get">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_ContactorNonFB_ThermalRelay.MR_PowerOFF">
       <LineId Id="5" Count="1" />
@@ -55,6 +113,18 @@ END_VAR
       <LineId Id="5" Count="1" />
     </LineIds>
     <LineIds Name="FB_ContactorNonFB_ThermalRelay.Powered.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay.PowerOffIsCalled.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay.PowerOnIsCalled.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay.Ref_piFR.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_ThermalRelay.Ref_poCoil.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

@@ -39,6 +39,13 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
+    <Property Name="Powered" Id="{0ab80262-39ba-4135-9eec-c3b702ce9e37}">
+      <Declaration><![CDATA[(*Powerer on success*)
+PROPERTY Powered : REFERENCE TO BOOL]]></Declaration>
+      <Get Name="Get" Id="{cd02c1eb-0d30-4592-bb7a-a3607ce276d6}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
     <Property Name="ReasonError" Id="{54e89aaa-963a-4230-b420-ea58a55c43af}">
       <Declaration><![CDATA[(*return value depedning on Request*)
 PROPERTY ReasonError : string]]></Declaration>

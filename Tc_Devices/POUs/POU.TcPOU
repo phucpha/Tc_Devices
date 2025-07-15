@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="POU" Id="{72876a34-3061-4895-8343-255626024a2e}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM POU
+VAR
+	a : FB_BurnerControlEcoFlam;
+	b : FB_ContactorFBNO;
+	c : FB_Contactor1FB_ThermalRelay;
+	d : FB_ContactorNonFB_ThermalRelay;
+	e : FB_SingleCoilCylinder;
+	f : FB_DoubleCoilCylinder;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="POU">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

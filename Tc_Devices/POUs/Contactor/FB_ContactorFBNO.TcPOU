@@ -550,6 +550,28 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Property Name="PowerOffIsCalled" Id="{673555fb-8ccc-4025-a09c-9f404750ff95}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PowerOffIsCalled : bool]]></Declaration>
+      <Get Name="Get" Id="{8ce4ef48-9616-4c9e-bb7b-1e5a9bff339d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerOffIsCalled := poCoil.Out=FALSE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="PowerOnIsCalled" Id="{28e1022f-b936-47c1-a2d2-119595a84500}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PowerOnIsCalled : bool]]></Declaration>
+      <Get Name="Get" Id="{99efc1e1-f00c-4d4e-8ef1-f78b6777a853}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerOnIsCalled := poCoil.Out=TRUE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="PowerOnTime" Id="{7ed260cf-056f-47d3-95a1-ee703cce6186}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY PowerOnTime : REFERENCE TO TIME]]></Declaration>
       <Get Name="Get" Id="{f917c3fe-a108-4af0-8147-f2825bbd01a2}">
@@ -592,8 +614,8 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
-    <Property Name="ref_piNO" Id="{4c545766-9a61-4384-936f-ecfe725823c7}" FolderPath="Ref\">
-      <Declaration><![CDATA[PROPERTY ref_piNO : reference to  FB_DigitalInput]]></Declaration>
+    <Property Name="Ref_piNO" Id="{4c545766-9a61-4384-936f-ecfe725823c7}" FolderPath="Ref\">
+      <Declaration><![CDATA[PROPERTY Ref_piNO : reference to  FB_DigitalInput]]></Declaration>
       <Get Name="Get" Id="{98af76d7-c1f6-4f55-bfa1-32d1bc8c889b}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -603,14 +625,14 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
-    <Property Name="ref_poActiveCoil" Id="{378030a0-fe67-4d3f-ab83-3b578e42b934}" FolderPath="Ref\">
-      <Declaration><![CDATA[PROPERTY ref_poActiveCoil : reference to fb_digitalOutput]]></Declaration>
+    <Property Name="Ref_poCoil" Id="{378030a0-fe67-4d3f-ab83-3b578e42b934}" FolderPath="Ref\">
+      <Declaration><![CDATA[PROPERTY Ref_poCoil : reference to fb_digitalOutput]]></Declaration>
       <Get Name="Get" Id="{f40aa29c-1703-4682-b6ab-367b5f9953ff}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[ref_poActiveCoil ref= poCoil;]]></ST>
+          <ST><![CDATA[ref_poCoil ref= poCoil;]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -854,6 +876,12 @@ END_CASE]]></ST>
     <LineIds Name="FB_ContactorFBNO.Powered.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
+    <LineIds Name="FB_ContactorFBNO.PowerOffIsCalled.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorFBNO.PowerOnIsCalled.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
     <LineIds Name="FB_ContactorFBNO.PowerOnTime.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
@@ -866,10 +894,10 @@ END_CASE]]></ST>
     <LineIds Name="FB_ContactorFBNO.ReasonError.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="FB_ContactorFBNO.ref_piNO.Get">
+    <LineIds Name="FB_ContactorFBNO.Ref_piNO.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="FB_ContactorFBNO.ref_poActiveCoil.Get">
+    <LineIds Name="FB_ContactorFBNO.Ref_poCoil.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_ContactorFBNO.Simulation.Get">

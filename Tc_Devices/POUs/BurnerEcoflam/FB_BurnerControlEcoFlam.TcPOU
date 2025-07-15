@@ -93,7 +93,7 @@ END_VAR
         <Implementation>
           <ST><![CDATA[CASE eActivePowerType OF
 	ACTIVE_POWER_TYPE_NO_FEEDBACK:
-		isStop := NOT ifActivePowerNoFB.Powered;
+		isStop := ifActivePowerNoFB.PowerOffIsCalled;
 		
 	ACTIVE_POWER_TYPE_FEEDBACK:
 		isStop := NOT ifActivePower.Powered;
@@ -250,7 +250,7 @@ END_VAR
 	ACTIVE_POWER_TYPE_NO_FEEDBACK:
 		IF eState >= ECOFLAM_INITIALIZING 
 			AND eState < ECOFLAM_STOP_DONE 
-			AND ifActivePowerNoFB.Powered  
+			AND ifActivePowerNoFB.PowerOnIsCalled  
 		THEN
 			bStop := true;
 			MR_Stop := FALSE;
@@ -261,6 +261,7 @@ END_VAR
 			MR_Stop := TRUE;
 			bBusy := false;
 		END_IF 
+		
 	ACTIVE_POWER_TYPE_FEEDBACK:
 		IF eState >= ECOFLAM_INITIALIZING 
 			AND eState < ECOFLAM_STOP_DONE 
@@ -671,6 +672,7 @@ END_CASE]]></ST>
       <LineId Id="29" Count="1" />
       <LineId Id="47" Count="11" />
       <LineId Id="46" Count="0" />
+      <LineId Id="62" Count="0" />
       <LineId Id="32" Count="0" />
       <LineId Id="34" Count="11" />
       <LineId Id="33" Count="0" />

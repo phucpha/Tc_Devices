@@ -1,66 +1,58 @@
 <?xml version="1.0"?>
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56" ClassName="CNestedPlcProjDef">
 	<Project GUID="{BA4532CC-976D-4A00-93C4-933DE8777AE4}" Name="Tc_Devices" PrjFilePath="..\..\Tc_Devices\Tc_Devices.plcproj" TmcFilePath="..\..\Tc_Devices\Tc_Devices.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{800843D3-E7AE-9BAE-2475-4D05AF1E6CFE}">
+		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Tc_Devices\Tc_Devices.tmc" TmcHash="{BEF08649-E863-3B50-678D-A26B7E8F1822}">
 			<Name>Tc_Devices Instance</Name>
 			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 			<Vars VarGrpType="1">
 				<Name>PlcTask Inputs</Name>
 				<Var>
-					<Name>MAIN.analoginput.iRawValue</Name>
-					<Type>INT</Type>
-				</Var>
-				<Var>
-					<Name>MAIN.analoginput.bError</Name>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>MAIN.fbburner.piFault.bIn</Name>
+					<Name>POU.a.piFault.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbburner.piFireSussess.bIn</Name>
+					<Name>POU.a.piFireSussess.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbburnerw.piFault.bIn</Name>
+					<Name>POU.b.piNO.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbburnerw.piFireSussess.bIn</Name>
+					<Name>POU.c.piNO.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbContactor.piNO.bIn</Name>
+					<Name>POU.c.piFR.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbContactor1FB.piNO.bIn</Name>
+					<Name>POU.d.piFR.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbContactornoFB.piFR.bIn</Name>
+					<Name>POU.e.piActiveSensor.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbCylinder.piHomeSensor.bIn</Name>
+					<Name>POU.e.piHomeSensor.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbContactor1FB.piFR.bIn</Name>
+					<Name>POU.f.piActiveSensor.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbCylinder.piActiveSensor.bIn</Name>
+					<Name>POU.f.piHomeSensor.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
@@ -68,32 +60,32 @@
 			<Vars VarGrpType="2" AreaNo="1">
 				<Name>PlcTask Outputs</Name>
 				<Var>
-					<Name>MAIN.fbburnerw.poReset.bOut</Name>
+					<Name>POU.b.poCoil.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbContactor.poCoil.bOut</Name>
+					<Name>POU.c.poCoil.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbContactor1FB.poCoil.bOut</Name>
+					<Name>POU.d.poCoil.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbContactornoFB.poCoil.bOut</Name>
+					<Name>POU.e.poActiveValve.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbCylinder.poActiveValve.bOut</Name>
+					<Name>POU.f.poActiveValve.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>MAIN.fbCylinder.poHomeValve.bOut</Name>
+					<Name>POU.f.poHomeValve.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
