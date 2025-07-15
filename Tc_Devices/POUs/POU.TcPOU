@@ -3,12 +3,14 @@
   <POU Name="POU" Id="{72876a34-3061-4895-8343-255626024a2e}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM POU
 VAR
-	a : FB_BurnerControlEcoFlam;
-	b : FB_ContactorFBNO;
-	c : FB_Contactor1FB_ThermalRelay;
-	d : FB_ContactorNonFB_ThermalRelay;
-	e : FB_SingleCoilCylinder;
-	f : FB_DoubleCoilCylinder;
+	FB_BurnerControlEcoFlam : FB_BurnerControlEcoFlam;
+	FB_BurnerControlEcoFlamV2 : FB_BurnerControlEcoFlamV2;
+	FB_BurnerControlEcoFlamV3 : FB_BurnerControlEcoFlamV3;
+	FB_ContactorFBNO : FB_ContactorFBNO;
+	FB_Contactor1FB_ThermalRelay : FB_Contactor1FB_ThermalRelay;
+	FB_ContactorNonFB_ThermalRelay : FB_ContactorNonFB_ThermalRelay;
+	FB_SingleCoilCylinder : FB_SingleCoilCylinder;
+	FB_DoubleCoilCylinder : FB_DoubleCoilCylinder;
 END_VAR
 ]]></Declaration>
     <Implementation>

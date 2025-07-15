@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_BurnerControlEcoFlamV3" Id="{40ab636a-b8a1-4bda-af1e-6b0c6d112d1d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_BurnerControlEcoFlamV3 EXTENDS FB_BurnerControlEcoFlamV2 IMPLEMENTS I_BurnerControlEcoFlamV3
+VAR
+	poValveGas : FB_DigitalOutput;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Ref_poValveGas" Id="{e8e58ddd-0d8a-44f1-a09b-25662cbd80c9}">
+      <Declaration><![CDATA[PROPERTY Ref_poValveGas : REFERENCE TO FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{142be0d3-406e-4b2d-9dbb-32069800c34a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_poValveGas ref= poValveGas;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_BurnerControlEcoFlamV3">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV3.Ref_poValveGas.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,58 +1,78 @@
 <?xml version="1.0"?>
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56" ClassName="CNestedPlcProjDef">
 	<Project GUID="{BA4532CC-976D-4A00-93C4-933DE8777AE4}" Name="Tc_Devices" PrjFilePath="..\..\Tc_Devices\Tc_Devices.plcproj" TmcFilePath="..\..\Tc_Devices\Tc_Devices.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Tc_Devices\Tc_Devices.tmc" TmcHash="{BEF08649-E863-3B50-678D-A26B7E8F1822}">
+		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Tc_Devices\Tc_Devices.tmc" TmcHash="{BCF894BF-C571-9480-0E50-D484B277AEA4}">
 			<Name>Tc_Devices Instance</Name>
 			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 			<Vars VarGrpType="1">
 				<Name>PlcTask Inputs</Name>
 				<Var>
-					<Name>POU.a.piFault.bIn</Name>
+					<Name>POU.FB_BurnerControlEcoFlam.piFault.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.a.piFireSussess.bIn</Name>
+					<Name>POU.FB_BurnerControlEcoFlam.piFireSussess.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.b.piNO.bIn</Name>
+					<Name>POU.FB_BurnerControlEcoFlamV2.piFault.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.c.piNO.bIn</Name>
+					<Name>POU.FB_BurnerControlEcoFlamV2.piFireSussess.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.c.piFR.bIn</Name>
+					<Name>POU.FB_BurnerControlEcoFlamV3.piFault.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.d.piFR.bIn</Name>
+					<Name>POU.FB_BurnerControlEcoFlamV3.piFireSussess.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.e.piActiveSensor.bIn</Name>
+					<Name>POU.FB_ContactorFBNO.piNO.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.e.piHomeSensor.bIn</Name>
+					<Name>POU.FB_Contactor1FB_ThermalRelay.piNO.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.f.piActiveSensor.bIn</Name>
+					<Name>POU.FB_Contactor1FB_ThermalRelay.piFR.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.f.piHomeSensor.bIn</Name>
+					<Name>POU.FB_ContactorNonFB_ThermalRelay.piFR.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_SingleCoilCylinder.piActiveSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_SingleCoilCylinder.piHomeSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_DoubleCoilCylinder.piActiveSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_DoubleCoilCylinder.piHomeSensor.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
@@ -60,32 +80,47 @@
 			<Vars VarGrpType="2" AreaNo="1">
 				<Name>PlcTask Outputs</Name>
 				<Var>
-					<Name>POU.b.poCoil.bOut</Name>
+					<Name>POU.FB_BurnerControlEcoFlamV2.poReset.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.c.poCoil.bOut</Name>
+					<Name>POU.FB_BurnerControlEcoFlamV3.poReset.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.d.poCoil.bOut</Name>
+					<Name>POU.FB_BurnerControlEcoFlamV3.poValveGas.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.e.poActiveValve.bOut</Name>
+					<Name>POU.FB_ContactorFBNO.poCoil.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.f.poActiveValve.bOut</Name>
+					<Name>POU.FB_Contactor1FB_ThermalRelay.poCoil.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.f.poHomeValve.bOut</Name>
+					<Name>POU.FB_ContactorNonFB_ThermalRelay.poCoil.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_SingleCoilCylinder.poActiveValve.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_DoubleCoilCylinder.poActiveValve.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_DoubleCoilCylinder.poHomeValve.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>

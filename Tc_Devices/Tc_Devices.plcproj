@@ -19,7 +19,7 @@
     <Company>NewEngineer</Company>
     <Released>false</Released>
     <Title>Tc_Devices</Title>
-    <ProjectVersion>0.0.0.1</ProjectVersion>
+    <ProjectVersion>1.0.0.1</ProjectVersion>
     <LibraryCategories>
       <LibraryCategory xmlns="">
         <Id>{34b615cd-45ba-4d29-985a-190ea3e88038}</Id>
@@ -108,7 +108,16 @@
     <Compile Include="POUs\BurnerEcoflam\FB_BurnerControlEcoFlamV2.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\BurnerEcoflam\FB_BurnerControlEcoFlamV3.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\BurnerEcoflam\I_BurnerControlEcoFlam.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\BurnerEcoflam\I_BurnerControlEcoFlamV2.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\BurnerEcoflam\I_BurnerControlEcoFlamV3.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\ContactorTherRelay\FB_Contactor1FB_ThermalRelay.TcPOU">

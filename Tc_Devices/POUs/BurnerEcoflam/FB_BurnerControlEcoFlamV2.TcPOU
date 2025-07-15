@@ -3,7 +3,7 @@
   <POU Name="FB_BurnerControlEcoFlamV2" Id="{890a56d1-1ac8-4d8d-bc91-d02dd763dd8f}" SpecialFunc="None">
     <Declaration><![CDATA[(* This function use for BurnerControlEcoFlam have Reset by Digital output.
 *)
-FUNCTION_BLOCK FB_BurnerControlEcoFlamV2 EXTENDS FB_BurnerControlEcoFlam
+FUNCTION_BLOCK FB_BurnerControlEcoFlamV2 EXTENDS FB_BurnerControlEcoFlam IMPLEMENTS I_BurnerControlEcoFlamV2
 VAR
 	poReset : FB_DigitalOutput;
 END_VAR
@@ -11,22 +11,55 @@ END_VAR
     <Implementation>
       <ST><![CDATA[SUPER^();]]></ST>
     </Implementation>
-    <Method Name="MR_Reset" Id="{1073984c-af6c-466e-a7a3-8ad219bb6330}">
+    <Folder Name="Internal" Id="{bd4dc108-7c01-4c06-855a-5c2e03d60714}" />
+    <Folder Name="Request" Id="{9faf40b5-ec7e-4b3d-99a6-55f25a9a145d}" />
+    <Method Name="MR_Reset" Id="{9dbbb7c6-b46a-4998-9cc0-fb272acc39ab}" FolderPath="Request\">
       <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState >= ECOFLAM_READY_INITIALIZED AND bError THEN
+	bBusy := TRUE;
+	bReset := TRUE;
+	MR_Reset := FALSE;
+	eState := ECOFLAM_RESET;
+ELSIF eState = ECOFLAM_RESET_DONE THEN
+	bBusy := TRUE;
+	bReset := FALSE;
+	MR_Reset := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Reset" Id="{1073984c-af6c-466e-a7a3-8ad219bb6330}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Reset : BOOL
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[poReset.Out := TRUE;
-SUPER^.MS_Reset();]]></ST>
+piFireSussess.MR_Reset();
+bInit 		:= FALSE;
+bAbort		:= FALSE;
+bIgnition 	:= FALSE;
+bStop 		:= FALSE;
+IF NOT bError
+	AND NOT	piFireSussess.ErrorTimedout
+THEN
+	eState := ECOFLAM_RESET_DONE;
+END_IF
+
+]]></ST>
       </Implementation>
     </Method>
-    <Method Name="MS_ResetDone" Id="{84372ba7-44d5-4c6d-a992-a36d0f299462}">
+    <Method Name="MS_ResetDone" Id="{84372ba7-44d5-4c6d-a992-a36d0f299462}" FolderPath="Internal\">
       <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[poReset.Out := FALSE;
-SUPER^.MS_ResetDone();]]></ST>
+IF NOT bReset THEN
+	eState := ECOFLAM_READY_INITIALIZED;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Property Name="Ref_poReset" Id="{19a4886f-ceaa-4baa-af92-8ae8e5948c09}">
@@ -40,19 +73,74 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Method Name="StateMachine" Id="{f939ecf1-c196-4392-9843-2153cb9c76fe}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED StateMachine
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eState OF
+	ECOFLAM_UNINITIALIZED :
+		MS_Uninitialized();
+		
+	ECOFLAM_INITIALIZING	:
+		MS_Initializing();
+		
+	ECOFLAM_READY_INITIALIZED :
+		MS_ReadyInitialized();
+		
+	ECOFLAM_IGNITION	:
+		MS_Ignition();
+		
+	ECOFLAM_IGNITION_DONE	:
+		MS_IgnitionDone();
+		
+	ECOFLAM_STOP		:
+		MS_Stop();
+		
+	ECOFLAM_STOP_DONE	:
+		Ms_StopDone();
+		
+	ECOFLAM_RESET:
+		MS_Reset();
+		
+	ECOFLAM_RESET_DONE:
+		MS_ResetDone();
+		
+	ECOFLAM_ABORTING :
+		MS_Aborting();
+	
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="FB_BurnerControlEcoFlamV2">
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlamV2.MR_Reset">
+      <LineId Id="6" Count="8" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV2.MS_Reset">
       <LineId Id="6" Count="0" />
+      <LineId Id="8" Count="10" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlamV2.MS_ResetDone">
       <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="1" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlamV2.Ref_poReset.Get">
       <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV2.StateMachine">
+      <LineId Id="4" Count="20" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="26" Count="2" />
+      <LineId Id="3" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

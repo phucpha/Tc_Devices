@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_BurnerControlEcoFlamV3" Id="{ded3bbd8-27aa-4578-86e4-2e35290ad48e}">
+    <Declaration><![CDATA[INTERFACE I_BurnerControlEcoFlamV3 EXTENDS I_BurnerControlEcoFlamV2
+]]></Declaration>
+    <Property Name="Ref_poValveGas" Id="{2394de93-5835-4e01-a1e4-f395e38d27bb}">
+      <Declaration><![CDATA[PROPERTY Ref_poValveGas : REFERENCE TO FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{18653608-9bc9-4645-9e6e-c9622fdb933d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

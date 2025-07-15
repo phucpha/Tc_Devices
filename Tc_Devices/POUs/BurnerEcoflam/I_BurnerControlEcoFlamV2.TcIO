@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_BurnerControlEcoFlamV2" Id="{07149acc-c85c-464c-8f57-bfbf2ddbcf90}">
+    <Declaration><![CDATA[INTERFACE I_BurnerControlEcoFlamV2 EXTENDS I_BurnerControlEcoFlam
+]]></Declaration>
+    <Method Name="MR_Reset" Id="{8d5a4947-370d-4c23-bbd6-607c986532eb}">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Ref_poReset" Id="{567f1aac-6c26-4788-8478-e64c8db0593e}">
+      <Declaration><![CDATA[PROPERTY Ref_poReset : REFERENCE TO fb_digitalOutput]]></Declaration>
+      <Get Name="Get" Id="{a06ad692-2b46-424f-8354-a79b78fa33a2}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>
