@@ -2,7 +2,7 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_BurnerControlEcoFlam" Id="{88a4ffff-4393-4d36-8255-c49816de1886}" SpecialFunc="None">
     <Declaration><![CDATA[(* This function use for BurnerControlEcoFlam
-| this version dont have Reset components like Digital output.
+| this version dont have Reset components like Digital output, user have to reset manual at the BurnerControlEcoFlam device
 *)
 FUNCTION_BLOCK FB_BurnerControlEcoFlam IMPLEMENTS I_BurnerControlEcoFlam
 
@@ -223,6 +223,24 @@ ELSIF eState = ECOFLAM_READY_INITIALIZED THEN
 END_IF ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="MR_Reset" Id="{9dbbb7c6-b46a-4998-9cc0-fb272acc39ab}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState >= ECOFLAM_READY_INITIALIZED AND bError THEN
+	bBusy := TRUE;
+	bReset := TRUE;
+	MR_Reset := FALSE;
+	eState := ECOFLAM_RESET;
+ELSIF eState = ECOFLAM_RESET_DONE THEN
+	bBusy := TRUE;
+	bReset := FALSE;
+	MR_Reset := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="MR_Stop" Id="{e2d68bec-bb32-4b9d-b877-becb5ffec602}" FolderPath="Request\">
       <Declaration><![CDATA[METHOD MR_Stop : BOOL
 VAR_INPUT
@@ -366,6 +384,38 @@ END_VAR
         <ST><![CDATA[;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="MS_Reset" Id="{ce905759-3b28-40ed-a33c-aa295b63c877}" FolderPath="Internal\">
+      <Declaration><![CDATA[(*
+this version just reset piFireSussess, User have to reset manually at the device
+*)
+METHOD PROTECTED MS_Reset : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piFireSussess.MR_Reset();
+bInit 		:= FALSE;
+bAbort		:= FALSE;
+bIgnition 	:= FALSE;
+bStop 		:= FALSE;
+IF NOT bError
+	AND NOT	piFireSussess.ErrorTimedout
+THEN
+	eState := ECOFLAM_RESET_DONE;
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ResetDone" Id="{f943014d-068b-4845-bb11-9f41ba5be81e}" FolderPath="Internal\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bReset THEN
+	eState := ECOFLAM_READY_INITIALIZED;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="MS_Stop" Id="{0427a35e-52cf-4579-b5b6-38d6e9db201d}" FolderPath="Internal\">
       <Declaration><![CDATA[METHOD protected MS_Stop 
 VAR_INPUT
@@ -488,7 +538,7 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
-    <Method Name="StateMachine" Id="{9e4cfa2d-a6f0-499c-b27d-c1b8dc36dcaa}" FolderPath="Internal\">
+    <Method Name="StateMachine" Id="{f939ecf1-c196-4392-9843-2153cb9c76fe}" FolderPath="Internal\">
       <Declaration><![CDATA[METHOD PROTECTED StateMachine
 ]]></Declaration>
       <Implementation>
@@ -513,6 +563,12 @@ END_VAR
 		
 	ECOFLAM_STOP_DONE	:
 		Ms_StopDone();
+		
+	ECOFLAM_RESET:
+		MS_Reset();
+		
+	ECOFLAM_RESET_DONE:
+		MS_ResetDone();
 		
 	ECOFLAM_ABORTING :
 		MS_Aborting();
@@ -603,6 +659,10 @@ END_CASE]]></ST>
       <LineId Id="8" Count="0" />
       <LineId Id="7" Count="0" />
     </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MR_Reset">
+      <LineId Id="6" Count="8" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MR_Stop">
       <LineId Id="29" Count="1" />
       <LineId Id="47" Count="11" />
@@ -666,6 +726,14 @@ END_CASE]]></ST>
     <LineIds Name="FB_BurnerControlEcoFlam.MS_ReadyInitialized">
       <LineId Id="2" Count="0" />
     </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_Reset">
+      <LineId Id="8" Count="10" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.MS_ResetDone">
+      <LineId Id="10" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MS_Stop">
       <LineId Id="22" Count="0" />
       <LineId Id="21" Count="0" />
@@ -711,9 +779,15 @@ END_CASE]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.StateMachine">
-      <LineId Id="107" Count="21" />
-      <LineId Id="135" Count="2" />
-      <LineId Id="45" Count="0" />
+      <LineId Id="4" Count="20" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="26" Count="2" />
+      <LineId Id="3" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

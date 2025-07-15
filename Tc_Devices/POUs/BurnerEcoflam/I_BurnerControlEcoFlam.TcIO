@@ -54,6 +54,12 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
+    <Method Name="MR_Reset" Id="{8d5a4947-370d-4c23-bbd6-607c986532eb}" FolderPath="Request\">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
     <Method Name="MR_Stop" Id="{6eb02f76-5f30-479e-a4b8-51b727a3041f}" FolderPath="Request\">
       <Declaration><![CDATA[METHOD MR_Stop : BOOL
 VAR_INPUT
