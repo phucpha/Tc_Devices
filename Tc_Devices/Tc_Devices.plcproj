@@ -19,7 +19,7 @@
     <Company>NewEngineer</Company>
     <Released>false</Released>
     <Title>Tc_Devices</Title>
-    <ProjectVersion>0.1.0.1</ProjectVersion>
+    <ProjectVersion>0.1.1.1</ProjectVersion>
     <LibraryCategories>
       <LibraryCategory xmlns="">
         <Id>{34b615cd-45ba-4d29-985a-190ea3e88038}</Id>
@@ -249,6 +249,7 @@
     <Folder Include="POUs\Digital Devices\Digital Output" />
     <Folder Include="POUs\Digital Devices\Lamp Indicator" />
     <Folder Include="POUs\ActivePower" />
+    <Folder Include="POUs\Tank" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
     <Folder Include="VISUs\Image Pools" />

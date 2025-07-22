@@ -261,8 +261,9 @@ END_IF]]></ST>
       <Declaration><![CDATA[METHOD MR_PowerOFF : BOOL
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF eContactorState = CONTACTOR_IDLE
-	AND piNO.In 
+        <ST><![CDATA[IF eContactorState >= CONTACTOR_IDLE 
+	AND eContactorState <= CONTACTOR_POWER_ON_DONE
+	AND (piNO.In OR poCoil.Out)
 THEN
 	bBusy := TRUE;
 	bPowerOff := TRUE;
@@ -369,8 +370,8 @@ END_IF]]></ST>
       <Declaration><![CDATA[METHOD PROTECTED  MS_PowerOff
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[poCoil.Out := FALSE;
-
+        <ST><![CDATA[bPowerOn := FALSE;
+poCoil.Out := FALSE;
 CASE eContactorGoHomeState OF
 	CONTACTOR_MOVE_START_TRACKING:
 		
@@ -465,12 +466,10 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[poCoil.Out := FALSE;
-
 bInit 		:= FALSE;
 bPowerOn 	:= FALSE;
 bPowerOff 	:= FALSE;
 bAbort		:= FALSE;
-
 tonPowerOffDelay(IN := FALSE);
 tonPowerOnDelay(IN := FALSE);
 tonMeasurementTimer(IN:= FALSE);
@@ -781,6 +780,7 @@ END_CASE]]></ST>
     </LineIds>
     <LineIds Name="FB_ContactorFBNO.MR_PowerOFF">
       <LineId Id="18" Count="0" />
+      <LineId Id="33" Count="0" />
       <LineId Id="30" Count="1" />
       <LineId Id="19" Count="10" />
       <LineId Id="2" Count="0" />
@@ -823,7 +823,9 @@ END_CASE]]></ST>
       <LineId Id="17" Count="0" />
     </LineIds>
     <LineIds Name="FB_ContactorFBNO.MS_PowerOff">
-      <LineId Id="4" Count="3" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="4" Count="0" />
+      <LineId Id="6" Count="1" />
       <LineId Id="9" Count="19" />
       <LineId Id="2" Count="0" />
     </LineIds>
@@ -844,9 +846,10 @@ END_CASE]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_ContactorFBNO.MS_Reset">
-      <LineId Id="24" Count="1" />
+      <LineId Id="24" Count="0" />
       <LineId Id="3" Count="2" />
-      <LineId Id="7" Count="4" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="9" Count="2" />
       <LineId Id="13" Count="4" />
       <LineId Id="2" Count="0" />
       <LineId Id="22" Count="1" />
