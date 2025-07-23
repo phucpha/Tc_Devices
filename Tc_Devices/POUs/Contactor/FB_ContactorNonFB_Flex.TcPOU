@@ -13,6 +13,35 @@ END_VAR
     <Implementation>
       <ST><![CDATA[SUPER^();]]></ST>
     </Implementation>
+    <Method Name="MR_FirstCycle" Id="{dbd353e4-ac60-4183-be19-cfe7c161068c}">
+      <Declaration><![CDATA[METHOD MR_FirstCycle : BOOL
+VAR_INPUT
+	sName 							: STRING;
+	sCoilModuleType					: STRING;
+	sCoilPortID						: STRING;
+	sNOModuleType					: STRING;
+	sNOPortID						: STRING;
+	tGoActiveTimeout				: TIME;
+	tDelay							: TIME;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piNO.EnableTimeout := TRUE;
+THIS^.sName := sName;								
+THIS^.piNO.MR_FirstCycleEx(
+	sName := CONCAT(sName,':NO'),
+	sModuleType := sNOModuleType,
+	sPortID	:= sNOPortID,
+	bEnableTimeout := TRUE,
+	tDefaultTimeout	:= tGoActiveTimeout
+);
+THIS^.poCoil.MR_FirstCycle(
+	sName := CONCAT(sName,':Coil'),
+	sModuleType := sCoilModuleType,
+	sPortID := sCoilPortID
+);]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="Ref_piNO" Id="{b736aa4e-127a-4cb6-96e1-972eca122214}">
       <Declaration><![CDATA[PROPERTY Ref_piNO : reference to  FB_DigitalInput]]></Declaration>
       <Get Name="Get" Id="{244cc720-5090-4e22-be0d-1c653cfa97de}">
@@ -26,6 +55,17 @@ END_VAR
     </Property>
     <LineIds Name="FB_ContactorNonFB_Flex">
       <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_Flex.MR_FirstCycle">
+      <LineId Id="47" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="42" Count="4" />
     </LineIds>
     <LineIds Name="FB_ContactorNonFB_Flex.Ref_piNO.Get">
       <LineId Id="2" Count="0" />
