@@ -15,6 +15,15 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
+    <Property Name="Name" Id="{597a3270-f7a8-4a78-b94e-24f27877a623}">
+      <Declaration><![CDATA[PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{d95cbdb9-85a0-4987-85c9-30b5919c0e2f}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{472a8264-1d27-446e-8d84-546ce318d068}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
     <Property Name="PowerOffIsCalled" Id="{a4ced1a3-f39d-4615-b331-3db6928aa56f}">
       <Declaration><![CDATA[PROPERTY PowerOffIsCalled : bool]]></Declaration>
       <Get Name="Get" Id="{69412c2d-b2be-4c60-a317-9cfeda130b1c}">

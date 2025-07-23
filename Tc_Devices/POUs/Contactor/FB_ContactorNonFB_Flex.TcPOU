@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ContactorNonFB_Flex" Id="{cd50ce4f-283c-434e-8b9d-f759d9bf84f3}" SpecialFunc="None">
+    <Declaration><![CDATA[(* 
+| :Description: This function block use for Contactor active by digital output,
+| Use NO contact feedback(Digital Input) to just see, not affect the state control like "FB_contactorFBNO"
+*)
+FUNCTION_BLOCK FB_ContactorNonFB_Flex EXTENDS FB_ContactorNonFB
+VAR
+	piNO 		: FB_DigitalInputExt;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[SUPER^();]]></ST>
+    </Implementation>
+    <Property Name="Ref_piNO" Id="{b736aa4e-127a-4cb6-96e1-972eca122214}">
+      <Declaration><![CDATA[PROPERTY Ref_piNO : reference to  FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{244cc720-5090-4e22-be0d-1c653cfa97de}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_piNO ref= THIS^.piNO;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_ContactorNonFB_Flex">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB_Flex.Ref_piNO.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

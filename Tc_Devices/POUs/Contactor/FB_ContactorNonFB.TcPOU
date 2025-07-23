@@ -3,6 +3,7 @@
   <POU Name="FB_ContactorNonFB" Id="{8055df9a-fcf2-4aab-8951-1daf8136d408}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_ContactorNonFB IMPLEMENTS I_ActivePowerNoFB
 VAR
+	sName 		: STRING;
 	poCoil		: FB_DigitalOutput;
 END_VAR
 ]]></Declaration>
@@ -29,6 +30,26 @@ END_VAR
 MR_PowerON := TRUE;]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Name" Id="{467b226b-92ec-4530-a3d8-1fd1b2172635}">
+      <Declaration><![CDATA[PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{042d11fd-4c6a-489f-896a-b1b64fbda2ed}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name := sName;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{a449f54f-f120-4f00-9cea-a86fffb5d374}">
+        <Declaration><![CDATA[
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[sName := Name;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Property Name="PowerOffIsCalled" Id="{f4d29c3a-e2e0-4255-bb91-f7f85b18af44}">
       <Declaration><![CDATA[PROPERTY PowerOffIsCalled : bool]]></Declaration>
       <Get Name="Get" Id="{a32138f6-16f5-45e1-88d6-e1b9f9364882}">
@@ -70,6 +91,12 @@ END_VAR
     </LineIds>
     <LineIds Name="FB_ContactorNonFB.MR_PowerON">
       <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB.Name.Set">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_ContactorNonFB.PowerOffIsCalled.Get">
       <LineId Id="2" Count="0" />

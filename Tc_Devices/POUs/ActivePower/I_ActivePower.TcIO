@@ -51,6 +51,15 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
+    <Property Name="Name" Id="{5d65315f-e1f6-425c-a804-83ec22bf303c}">
+      <Declaration><![CDATA[PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{980b2765-52eb-403a-9b3e-b615778c2c40}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{4bd048af-67c4-46e2-ae2c-f97b299090dc}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
     <Property Name="Powered" Id="{0ab80262-39ba-4135-9eec-c3b702ce9e37}">
       <Declaration><![CDATA[(*Powerer on success*)
 PROPERTY Powered : REFERENCE TO BOOL]]></Declaration>

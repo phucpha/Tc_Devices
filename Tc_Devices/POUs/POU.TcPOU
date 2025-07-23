@@ -10,6 +10,7 @@ VAR
 	fb_contactorNonFB : FB_ContactorNonFB;
 	FB_Contactor1FB_ThermalRelay : FB_Contactor1FB_ThermalRelay;
 	FB_ContactorNonFB_ThermalRelay : FB_ContactorNonFB_ThermalRelay;
+	FB_ContactorNonFB_Flex_ThermalRelay : FB_ContactorNonFB_Flex_ThermalRelay;
 	FB_SingleCoilCylinder : FB_SingleCoilCylinder;
 	FB_DoubleCoilCylinder : FB_DoubleCoilCylinder;
 END_VAR

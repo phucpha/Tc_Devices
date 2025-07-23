@@ -19,7 +19,7 @@
     <Company>NewEngineer</Company>
     <Released>false</Released>
     <Title>Tc_Devices</Title>
-    <ProjectVersion>0.1.1.1</ProjectVersion>
+    <ProjectVersion>1.1.1.1</ProjectVersion>
     <LibraryCategories>
       <LibraryCategory xmlns="">
         <Id>{34b615cd-45ba-4d29-985a-190ea3e88038}</Id>
@@ -123,10 +123,16 @@
     <Compile Include="POUs\ContactorTherRelay\FB_Contactor1FB_ThermalRelay.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\ContactorTherRelay\FB_ContactorNonFB_Flex_ThermalRelay.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\ContactorTherRelay\FB_ContactorNonFB_ThermalRelay.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Contactor\FB_ContactorFBNO.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\Contactor\FB_ContactorNonFB_Flex.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Contactor\FB_ContactorNonFB.TcPOU">

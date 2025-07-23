@@ -1,12 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="FB_Contactor1FB_ThermalRelay" Id="{8da0f9a8-4739-4828-afed-8042b6912c75}" SpecialFunc="None">
-    <Declaration><![CDATA[(* 
-| :Description: this function block is the Contactor FeedbackNO + thermal relay connect toghther.
-| Then wiring have to series by Digital output to NC thermal relay to Coil
-*)
-FUNCTION_BLOCK FB_Contactor1FB_ThermalRelay EXTENDS FB_ContactorFBNO IMPLEMENTS I_ActivePower
-
+  <POU Name="FB_ContactorNonFB_Flex_ThermalRelay" Id="{1adb145d-2e37-4389-92dc-9e86672d93fd}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ContactorNonFB_Flex_ThermalRelay EXTENDS FB_ContactorNonFB_Flex
 VAR
 	piFR		: FB_DigitalInput;// thermal relay NO
 	bOverload	: BOOL;
@@ -16,9 +11,9 @@ END_VAR
       <ST><![CDATA[bOverload :=  piFR.In;
 SUPER^();]]></ST>
     </Implementation>
-    <Property Name="IsOverload" Id="{3d1bface-fd3e-4334-80a1-bb3342b6c4d1}">
+    <Property Name="IsOverload" Id="{3ef34ec1-df4f-4a8a-961a-01f509836c97}">
       <Declaration><![CDATA[PROPERTY IsOverload : REFERENCE to bool]]></Declaration>
-      <Get Name="Get" Id="{7a306cd3-bcff-47d6-803c-4e3e5d45b050}">
+      <Get Name="Get" Id="{658399c6-726c-4361-baf2-50ffc815893c}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
@@ -27,24 +22,22 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
-    <Property Name="ReasonError" Id="{dbaa58cc-3dc2-4519-ab59-a0b4700aeae2}">
+    <Property Name="ReasonError" Id="{f7227d89-79e3-4423-896e-d3d00113b065}">
       <Declaration><![CDATA[PROPERTY ReasonError : string]]></Declaration>
-      <Get Name="Get" Id="{dacf614b-3bf2-44cd-84cc-ec6bef851230}">
+      <Get Name="Get" Id="{3716ab08-388e-43f1-a049-6a26dd1d46b4}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
           <ST><![CDATA[IF isOverload THEN 
 	ReasonError := 'ThermalRelay OverLoad';
-ELSE
-	ReasonError := 'Coil of Contactor or NO contact work incorrectly';
 END_IF]]></ST>
         </Implementation>
       </Get>
     </Property>
-    <Property Name="Ref_piFR" Id="{2d8a8012-3e65-4a05-87e0-fd4284f0c0d6}">
+    <Property Name="Ref_piFR" Id="{ebfc3958-0b40-4bbd-8074-bd0772026004}">
       <Declaration><![CDATA[PROPERTY Ref_piFR : reference to FB_DigitalInput]]></Declaration>
-      <Get Name="Get" Id="{b532bf69-e8a9-48db-954d-c0c24454005a}">
+      <Get Name="Get" Id="{c07d0155-7008-4de9-b594-2b395f284b5b}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
@@ -53,19 +46,19 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
-    <LineIds Name="FB_Contactor1FB_ThermalRelay">
-      <LineId Id="47" Count="0" />
-      <LineId Id="31" Count="0" />
+    <LineIds Name="FB_ContactorNonFB_Flex_ThermalRelay">
+      <LineId Id="16" Count="0" />
+      <LineId Id="15" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Contactor1FB_ThermalRelay.IsOverload.Get">
+    <LineIds Name="FB_ContactorNonFB_Flex_ThermalRelay.IsOverload.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Contactor1FB_ThermalRelay.ReasonError.Get">
+    <LineIds Name="FB_ContactorNonFB_Flex_ThermalRelay.ReasonError.Get">
       <LineId Id="2" Count="0" />
-      <LineId Id="5" Count="1" />
-      <LineId Id="8" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Contactor1FB_ThermalRelay.Ref_piFR.Get">
+    <LineIds Name="FB_ContactorNonFB_Flex_ThermalRelay.Ref_piFR.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

@@ -7,7 +7,8 @@ VAR
 	bOverload	: BOOL;
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[bOverload :=  piFR.In;]]></ST>
+      <ST><![CDATA[bOverload :=  piFR.In;
+SUPER^(); ]]></ST>
     </Implementation>
     <Property Name="IsOverload" Id="{d1f79765-5ea1-417c-ab92-3f7e5d28c481}">
       <Declaration><![CDATA[PROPERTY IsOverload : REFERENCE to bool]]></Declaration>
@@ -33,6 +34,7 @@ END_VAR
     </Property>
     <LineIds Name="FB_ContactorNonFB_ThermalRelay">
       <LineId Id="15" Count="0" />
+      <LineId Id="30" Count="0" />
     </LineIds>
     <LineIds Name="FB_ContactorNonFB_ThermalRelay.IsOverload.Get">
       <LineId Id="2" Count="0" />
