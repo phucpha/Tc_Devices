@@ -3,6 +3,7 @@
   <POU Name="FB_ContactorFBNO" Id="{feb7b10e-a057-45cb-8cc6-9abcfcba8d32}" SpecialFunc="None">
     <Declaration><![CDATA[(* 
 | :Description: This function block use for Contactor active by digital output, Use NO contact feedback(Digital Input) to Check Error
+| Don't not extend the FB_ContactorNonFB because it violate Liskov Substitution Principle (LSP)
 *)
 FUNCTION_BLOCK FB_ContactorFBNO IMPLEMENTS I_ActivePower
 VAR
@@ -46,7 +47,7 @@ Version history:
 +-------------+------------+----------------+-------------------------------+------------------------------------------+
 |Date         | Version    | created under  | Author   						| Remark                                   |
 +=============+============+================+===============================+==========================================+
-|2025-06      | 1.0.0.0    | V3.1.4024.56   | https://github.com/phucpha    | Function block created                   |
+|2025-06      | 0.1.1.1   | V3.1.4024.56   | https://github.com/phucpha    | Function block created                   |
 +-------------+------------+----------------+-------------------------------+------------------------------------------+
 
 *)]]></Declaration>

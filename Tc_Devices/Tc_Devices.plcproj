@@ -129,6 +129,9 @@
     <Compile Include="POUs\Contactor\FB_ContactorFBNO.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\Contactor\FB_ContactorNonFB.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\Cylinder\Double Coil Cylinder\FB_DoubleCoilCylinder.TcPOU">
       <SubType>Code</SubType>
     </Compile>

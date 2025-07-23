@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ContactorNonFB" Id="{8055df9a-fcf2-4aab-8951-1daf8136d408}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ContactorNonFB IMPLEMENTS I_ActivePowerNoFB
+VAR
+	poCoil		: FB_DigitalOutput;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="MR_PowerOFF" Id="{f586367f-63e8-4000-9264-0308e5e1e7c9}">
+      <Declaration><![CDATA[METHOD MR_PowerOFF : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCoil.Out := FALSE;
+MR_PowerOFF := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_PowerON" Id="{c3e3ebf4-5abb-46b7-9be9-bbbcb5319997}">
+      <Declaration><![CDATA[METHOD MR_PowerON : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCoil.Out := TRUE;
+MR_PowerON := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="PowerOffIsCalled" Id="{f4d29c3a-e2e0-4255-bb91-f7f85b18af44}">
+      <Declaration><![CDATA[PROPERTY PowerOffIsCalled : bool]]></Declaration>
+      <Get Name="Get" Id="{a32138f6-16f5-45e1-88d6-e1b9f9364882}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerOffIsCalled := poCoil.Out=FALSE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="PowerOnIsCalled" Id="{b5a9fd27-9adb-442c-b74a-4e5f2de99305}">
+      <Declaration><![CDATA[PROPERTY PowerOnIsCalled : bool]]></Declaration>
+      <Get Name="Get" Id="{19fd6cd3-c798-4dbe-a900-370b14c9c952}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerOnIsCalled := poCoil.Out=TRUE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_poCoil" Id="{f448b09b-740d-4081-992d-9df83dad2ffa}">
+      <Declaration><![CDATA[PROPERTY Ref_poCoil : reference to fb_digitalOutput]]></Declaration>
+      <Get Name="Get" Id="{7906f1d6-582f-4f12-89e8-0e51f0d8257c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ref_poCoil ref= poCoil;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_ContactorNonFB">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB.MR_PowerOFF">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB.MR_PowerON">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB.PowerOffIsCalled.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB.PowerOnIsCalled.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ContactorNonFB.Ref_poCoil.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

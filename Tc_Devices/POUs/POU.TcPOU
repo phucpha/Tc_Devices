@@ -7,6 +7,7 @@ VAR
 	FB_BurnerControlEcoFlamV2 : FB_BurnerControlEcoFlamV2;
 	FB_BurnerControlEcoFlamV3 : FB_BurnerControlEcoFlamV3;
 	FB_ContactorFBNO : FB_ContactorFBNO;
+	fb_contactorNonFB : FB_ContactorNonFB;
 	FB_Contactor1FB_ThermalRelay : FB_Contactor1FB_ThermalRelay;
 	FB_ContactorNonFB_ThermalRelay : FB_ContactorNonFB_ThermalRelay;
 	FB_SingleCoilCylinder : FB_SingleCoilCylinder;

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <Itf Name="I_ActivePower" Id="{e4d392f5-3228-42b6-907b-ce95dee03de3}">
-    <Declaration><![CDATA[INTERFACE I_ActivePower EXTENDS I_ActivePowerNoFB
+    <Declaration><![CDATA[INTERFACE I_ActivePower	// don't not EXTENDS I_ActivePowerNoFB, it violates Liskov Substitution Principle (LSP)
 ]]></Declaration>
     <Property Name="Active" Id="{55fbb479-5223-4482-b7af-3105728ac033}">
       <Declaration><![CDATA[PROPERTY Active : reference to bool]]></Declaration>
@@ -33,6 +33,18 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
+    <Method Name="MR_PowerOFF" Id="{fb6d8ace-5aaf-423b-ac19-721c502e3826}">
+      <Declaration><![CDATA[METHOD MR_PowerOFF : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MR_PowerON" Id="{2dbf883b-7cf2-4d79-816c-8ee157c39308}">
+      <Declaration><![CDATA[METHOD MR_PowerON : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
     <Method Name="MR_Reset" Id="{724598b8-ed33-4ba4-bb07-89d9ef6a61ec}">
       <Declaration><![CDATA[METHOD MR_Reset : bool
 VAR_INPUT
@@ -43,6 +55,18 @@ END_VAR
       <Declaration><![CDATA[(*Powerer on success*)
 PROPERTY Powered : REFERENCE TO BOOL]]></Declaration>
       <Get Name="Get" Id="{cd02c1eb-0d30-4592-bb7a-a3607ce276d6}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="PowerOffIsCalled" Id="{3de0dd29-91a2-46c6-abf3-5e4c21c2da7f}">
+      <Declaration><![CDATA[PROPERTY PowerOffIsCalled : bool]]></Declaration>
+      <Get Name="Get" Id="{d6837f00-9360-4876-9c5e-b134773d5b71}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="PowerOnIsCalled" Id="{e6e52be3-d24c-4b84-9646-aa73761429a4}">
+      <Declaration><![CDATA[PROPERTY PowerOnIsCalled : bool]]></Declaration>
+      <Get Name="Get" Id="{353a6334-06a6-412a-9b39-37a7f939d411}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
