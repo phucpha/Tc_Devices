@@ -3,27 +3,57 @@
   <POU Name="FB_BurnerControlEcoFlamV3" Id="{40ab636a-b8a1-4bda-af1e-6b0c6d112d1d}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_BurnerControlEcoFlamV3 EXTENDS FB_BurnerControlEcoFlamV2 IMPLEMENTS I_BurnerControlEcoFlamV3
 VAR
-	poValveGas : FB_DigitalOutput;
+	poOnOff : FB_DigitalOutput;
+	poGasLv1 : FB_DigitalOutput;
+	poGasLv2 : FB_DigitalOutput;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Property Name="Ref_poValveGas" Id="{e8e58ddd-0d8a-44f1-a09b-25662cbd80c9}">
-      <Declaration><![CDATA[PROPERTY Ref_poValveGas : REFERENCE TO FB_DigitalOutput]]></Declaration>
+    <Property Name="Ref_poGasLv1" Id="{4d9794b6-a63a-48e4-a338-0d5cc6f7d7a3}">
+      <Declaration><![CDATA[PROPERTY Ref_poGasLv1 : REFERENCE TO FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{4082d1c2-5f6a-4c9f-858d-2b1e5100ee74}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_poGasLv1 ref= poGasLv1;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_poGasLv2" Id="{a4cde0dd-6c9e-4d2f-9a7c-c92a49365c5f}">
+      <Declaration><![CDATA[PROPERTY Ref_poGasLv2 : REFERENCE TO FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{46d21bbb-9b87-4049-a477-f573fdec9b19}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_poGasLv2]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_poOnOff" Id="{e8e58ddd-0d8a-44f1-a09b-25662cbd80c9}">
+      <Declaration><![CDATA[PROPERTY Ref_poOnOff : REFERENCE TO FB_DigitalOutput]]></Declaration>
       <Get Name="Get" Id="{142be0d3-406e-4b2d-9dbb-32069800c34a}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[Ref_poValveGas ref= poValveGas;]]></ST>
+          <ST><![CDATA[Ref_poOnOff ref= poOnOff;]]></ST>
         </Implementation>
       </Get>
     </Property>
     <LineIds Name="FB_BurnerControlEcoFlamV3">
       <LineId Id="9" Count="0" />
     </LineIds>
-    <LineIds Name="FB_BurnerControlEcoFlamV3.Ref_poValveGas.Get">
+    <LineIds Name="FB_BurnerControlEcoFlamV3.Ref_poGasLv1.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV3.Ref_poGasLv2.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV3.Ref_poOnOff.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
