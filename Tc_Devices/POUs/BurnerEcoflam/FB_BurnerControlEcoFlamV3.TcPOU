@@ -29,7 +29,7 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[Ref_poGasLv2]]></ST>
+          <ST><![CDATA[Ref_poGasLv2 ref= poGasLv2;]]></ST>
         </Implementation>
       </Get>
     </Property>
