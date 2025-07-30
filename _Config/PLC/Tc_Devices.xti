@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56" ClassName="CNestedPlcProjDef">
 	<Project GUID="{BA4532CC-976D-4A00-93C4-933DE8777AE4}" Name="Tc_Devices" PrjFilePath="..\..\Tc_Devices\Tc_Devices.plcproj" TmcFilePath="..\..\Tc_Devices\Tc_Devices.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Tc_Devices\Tc_Devices.tmc" TmcHash="{6E069F1D-7735-3ABB-4E6E-4E2EB35F7C44}">
+		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Tc_Devices\Tc_Devices.tmc" TmcHash="{AA390231-D23D-994A-42DC-D1FA4CBE0FD6}">
 			<Name>Tc_Devices Instance</Name>
 			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 			<Vars VarGrpType="1">
@@ -42,26 +42,6 @@
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.FB_SingleCoilCylinder.piActiveSensor.bIn</Name>
-					<Comment><![CDATA[ Current value of input ]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.FB_SingleCoilCylinder.piHomeSensor.bIn</Name>
-					<Comment><![CDATA[ Current value of input ]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.FB_DoubleCoilCylinder.piActiveSensor.bIn</Name>
-					<Comment><![CDATA[ Current value of input ]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.FB_DoubleCoilCylinder.piHomeSensor.bIn</Name>
-					<Comment><![CDATA[ Current value of input ]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
 					<Name>POU.FB_Contactor1FB_ThermalRelay.piNO.bIn</Name>
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
@@ -86,6 +66,96 @@
 					<Comment><![CDATA[ Current value of input ]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
+				<Var>
+					<Name>POU.FB_SingleCoilCylinder.piActiveSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_SingleCoilCylinder.piHomeSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_DoubleCoilCylinder.piActiveSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_DoubleCoilCylinder.piHomeSensor.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbsingletank.piLslow.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbsingletank.piLsHigh.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbsingletankV0.piLslow.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbsingletankV0.piLsHigh.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbsingletankV1.piLslow.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbsingletankV1.piLsHigh.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbTankFourCompartments.fbTank1.piLslow.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbTankFourCompartments.fbTank1.piLsHigh.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbTankFourCompartments.fbTank2.piLslow.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbTankFourCompartments.fbTank2.piLsHigh.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbTankFourCompartments.fbTank3.piLslow.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbTankFourCompartments.fbTank3.piLsHigh.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbTankFourCompartments.fbTank4.piLslow.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.fbTankFourCompartments.fbTank4.piLsHigh.bIn</Name>
+					<Comment><![CDATA[ Current value of input ]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
 			</Vars>
 			<Vars VarGrpType="2" AreaNo="1">
 				<Name>PlcTask Outputs</Name>
@@ -100,27 +170,22 @@
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
-					<Name>POU.FB_BurnerControlEcoFlamV3.poValveGas.bOut</Name>
+					<Name>POU.FB_BurnerControlEcoFlamV3.poOnOff.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_BurnerControlEcoFlamV3.poGasLv1.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_BurnerControlEcoFlamV3.poGasLv2.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
 				<Var>
 					<Name>POU.FB_ContactorFBNO.poCoil.bOut</Name>
-					<Comment><![CDATA[ Current value of output]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.FB_SingleCoilCylinder.poActiveValve.bOut</Name>
-					<Comment><![CDATA[ Current value of output]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.FB_DoubleCoilCylinder.poActiveValve.bOut</Name>
-					<Comment><![CDATA[ Current value of output]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.FB_DoubleCoilCylinder.poHomeValve.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>
@@ -141,6 +206,21 @@
 				</Var>
 				<Var>
 					<Name>POU.FB_ContactorNonFB_Flex_ThermalRelay.poCoil.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_SingleCoilCylinder.poActiveValve.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_DoubleCoilCylinder.poActiveValve.bOut</Name>
+					<Comment><![CDATA[ Current value of output]]></Comment>
+					<Type>BOOL</Type>
+				</Var>
+				<Var>
+					<Name>POU.FB_DoubleCoilCylinder.poHomeValve.bOut</Name>
 					<Comment><![CDATA[ Current value of output]]></Comment>
 					<Type>BOOL</Type>
 				</Var>

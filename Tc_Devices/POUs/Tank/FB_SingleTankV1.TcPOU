@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_SingleTankV1" Id="{3c3c8172-9c8e-4f0e-8bd8-ee41f1a2ec87}" SpecialFunc="None">
+    <Declaration><![CDATA[(* Single tank with LimitSwitchLow (piLsLow) and LimitSwitchHigh (piLsHigh)
+| using this function when it have INDEPENDENT Measure weight
+*)
+FUNCTION_BLOCK FB_SingleTankV1 EXTENDS FB_SingleTank
+VAR
+	bAllowInMaterial : BOOL;
+	bAllowOutMaterial : BOOL;
+	lrLimitMinWeight : LREAL;
+	lrLimitMaxWeight : LREAL;
+	lrWeightWithdraw : LREAL; 		// weight withdraw Request 
+	bEnoughWithdraw : BOOL;
+	lrWeight : LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[bAllowInMaterial := lrWeight < lrLimitMaxWeight
+						AND NOT piLsHigh.In;
+						
+bAllowOutMaterial := lrWeight > lrLimitMinWeight
+						AND piLslow.In;
+bEnoughWithdraw := lrWeight > (lrWeightWithdraw + lrLimitMinWeight);
+SUPER^();]]></ST>
+    </Implementation>
+    <Property Name="AllowIn" Id="{a5d1e9f2-1d23-4794-9392-8644ad8ab554}">
+      <Declaration><![CDATA[PROPERTY AllowIn : Reference to bool]]></Declaration>
+      <Get Name="Get" Id="{4611aad3-ae04-417a-8e61-b72d52a0c4c9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[AllowIn ref= bAllowInMaterial;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="AllowOut" Id="{5d4e6ea0-55ba-4704-a525-66ba75ae4a85}">
+      <Declaration><![CDATA[(*
+| Check the minimum condition  (lrWeight > lrLimitMinWeight
+								AND piLslow.In;)
+*)
+PROPERTY AllowOut : REFERENCE TO BOOL ]]></Declaration>
+      <Get Name="Get" Id="{fa245f39-09b8-4716-b89c-489ebbbd1034}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[AllowOut ref= bAllowOutMaterial;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="EnoughWithdraw" Id="{14d668ef-cb0c-48e5-a28f-b4a763b749af}">
+      <Declaration><![CDATA[(*
+|Check enough weight to withdraw
+*)
+PROPERTY EnoughWithdraw : reference to bool]]></Declaration>
+      <Get Name="Get" Id="{72331470-823e-4389-a30c-fc5d641e0da2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[EnoughWithdraw ref= bEnoughWithdraw;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="LimitMaxWeight" Id="{09fb551a-44f6-4d4c-a29c-9adbf53bc1cd}">
+      <Declaration><![CDATA[PROPERTY LimitMaxWeight : LREAL]]></Declaration>
+      <Get Name="Get" Id="{02401e58-0bb9-42a3-8fe1-495c415f6569}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LimitMaxWeight := lrLimitMaxWeight;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{2848334a-9b22-45d2-ac30-3fd5e06e6022}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[lrLimitMaxWeight := LimitMaxWeight;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="LimitMinWeight" Id="{92119500-b222-4856-9d65-fe07625525b9}">
+      <Declaration><![CDATA[PROPERTY LimitMinWeight : LREAL]]></Declaration>
+      <Get Name="Get" Id="{67a0b6a7-533a-440e-a39d-a2e2b1939326}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LimitMinWeight := lrLimitMinWeight;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d4aabfd8-d758-407f-a9a5-9feeba1db405}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[lrLimitMinWeight := LimitMinWeight; ]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Weight" Id="{48882b1a-1508-4301-adb8-c089b6bbba6d}">
+      <Declaration><![CDATA[PROPERTY Weight : lreal]]></Declaration>
+      <Get Name="Get" Id="{362c66b8-ca90-4246-a487-4309fe64b699}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Weight := lrWeight;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{67a10c51-fa14-474d-96ee-72217c924e34}">
+        <Declaration><![CDATA[
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[lrWeight := Weight;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="WeightWithdraw" Id="{6d9ed7fc-1a86-4025-a41e-3fd4479388ad}">
+      <Declaration><![CDATA[PROPERTY WeightWithdraw : lreal]]></Declaration>
+      <Get Name="Get" Id="{1111ca0d-4b93-425c-9139-7bcae5615117}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[WeightWithdraw := lrWeightWithdraw;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{b23ab4a6-f158-435d-89cf-39a8467e5856}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[lrWeightWithdraw := WeightWithdraw;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="FB_SingleTankV1">
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="72" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.AllowIn.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.AllowOut.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.EnoughWithdraw.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.LimitMaxWeight.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.LimitMaxWeight.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.LimitMinWeight.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.LimitMinWeight.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.Weight.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.Weight.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.WeightWithdraw.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.WeightWithdraw.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

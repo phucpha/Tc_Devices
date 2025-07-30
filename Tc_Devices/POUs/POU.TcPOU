@@ -13,6 +13,10 @@ VAR
 	FB_ContactorNonFB_Flex_ThermalRelay : FB_ContactorNonFB_Flex_ThermalRelay;
 	FB_SingleCoilCylinder : FB_SingleCoilCylinder;
 	FB_DoubleCoilCylinder : FB_DoubleCoilCylinder;
+	fbsingletank : FB_SingleTank;
+	fbsingletankV0 : FB_SingleTankV0;
+	fbsingletankV1 : FB_SingleTankV1;
+	fbTankFourCompartments : FB_TankFourCompartments;
 END_VAR
 ]]></Declaration>
     <Implementation>

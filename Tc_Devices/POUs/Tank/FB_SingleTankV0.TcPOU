@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_SingleTankV0" Id="{804ff059-bff6-46a3-be72-e0e118682176}" SpecialFunc="None">
+    <Declaration><![CDATA[(* Single tank with LimitSwitchLow (piLsLow) and LimitSwitchHigh (piLsHigh)
+| using this function when have to DEPENDENT Measure weight
+*)
+FUNCTION_BLOCK FB_SingleTankV0 EXTENDS FB_SingleTank
+VAR
+	bAllowInMaterial : BOOL;
+	bAllowOutMaterial : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[bAllowInMaterial := NOT piLsHigh.In;
+bAllowOutMaterial := piLslow.In;
+SUPER^();]]></ST>
+    </Implementation>
+    <Property Name="AllowIn" Id="{fc712f05-a064-4a5a-96e7-72aaec14e8cf}">
+      <Declaration><![CDATA[PROPERTY AllowIn : Reference to bool]]></Declaration>
+      <Get Name="Get" Id="{5c729add-9dbd-4aa3-b258-be82a8761357}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[AllowIn ref= bAllowInMaterial;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="AllowOut" Id="{0e0965dc-bf3f-4465-bfeb-792393b01443}">
+      <Declaration><![CDATA[(*
+| Check the minimum condition  (lrWeight > lrLimitMinWeight
+								AND piLslow.In;)
+*)
+PROPERTY AllowOut : REFERENCE TO BOOL ]]></Declaration>
+      <Get Name="Get" Id="{b01519fc-927a-40ec-ba86-a2b2d4e2c6ab}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[AllowOut ref= bAllowOutMaterial;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_SingleTankV0">
+      <LineId Id="18" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV0.AllowIn.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV0.AllowOut.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_SingleTank" Id="{fb97367d-7b47-44e9-8c40-eeee1f05ceee}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SingleTank
+VAR
+	sName : STRING;
+	sWeightUnit : STRING := 'Kg'; // Kg
+	piLslow : FB_DigitalInput;
+	piLsHigh : FB_DigitalInput;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Name" Id="{a7647dce-070a-425b-99fc-11d432804333}">
+      <Declaration><![CDATA[PROPERTY Name : String]]></Declaration>
+      <Get Name="Get" Id="{dd3fac2e-05af-4186-a43b-0d03e88b709e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name := sName;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{2be577ed-204f-4885-9934-5c2ffce1c9a1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[sName := Name;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Ref_piLsHigh" Id="{7e7f4737-2362-4583-a3a2-cd6dfee5ec62}">
+      <Declaration><![CDATA[PROPERTY Ref_piLsHigh : reference to FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{19e0dff5-6a0e-44b0-9293-2f2309385d1b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_piLsHigh ref= piLsHigh;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_piLsLow" Id="{602bc692-fbb2-4ec7-a243-8b8e8ee96c4d}">
+      <Declaration><![CDATA[PROPERTY Ref_piLsLow : reference to FB_DigitalInput]]></Declaration>
+      <Get Name="Get" Id="{450a7dc7-f7f5-45a6-abbc-8937ab6a5af5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_piLsLow ref= piLslow;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="WeightUnit" Id="{77dbb17f-7210-4007-b0ad-d8ccfe7a3644}">
+      <Declaration><![CDATA[PROPERTY WeightUnit : string]]></Declaration>
+      <Get Name="Get" Id="{238a38ad-a707-4a80-8507-4f57900189f0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[WeightUnit := sWeightUnit;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{522630ab-9f84-43ad-a730-dd4797fe41d8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[sWeightUnit := WeightUnit;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="FB_SingleTank">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTank.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTank.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTank.Ref_piLsHigh.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTank.Ref_piLsLow.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTank.WeightUnit.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTank.WeightUnit.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
