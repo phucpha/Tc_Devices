@@ -305,13 +305,6 @@ END_CASE
 END_CASE]]></ST>
       </Implementation>
     </Method>
-    <Method Name="MS_Idle" Id="{849a6547-23c4-4948-8ef8-aef7f4745e6b}" FolderPath="Internal\">
-      <Declaration><![CDATA[METHOD PROTECTED MS_Idle
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[;]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="MS_Ignition" Id="{91633012-c724-40b7-94f9-37b2aa1a449f}" FolderPath="Internal\">
       <Declaration><![CDATA[METHOD PROTECTED MS_Ignition
 VAR_INPUT
@@ -688,9 +681,6 @@ END_CASE]]></ST>
       <LineId Id="22" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="15" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_BurnerControlEcoFlam.MS_Idle">
-      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MS_Ignition">
       <LineId Id="29" Count="0" />

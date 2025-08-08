@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_EcoFlamStateResetV3" Id="{60f02622-7c90-49bf-b907-2e5135c5811f}">
+    <Declaration><![CDATA[{attribute 'strict'}
+TYPE E_EcoFlamStateResetV3 :
+(
+	ECOFLAM_V3_RESET_TURN_OFF,
+	ECOFLAM_V3_RESET_TURN_ON,
+	ECOFLAM_V3_RESET_PORESET_ON
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

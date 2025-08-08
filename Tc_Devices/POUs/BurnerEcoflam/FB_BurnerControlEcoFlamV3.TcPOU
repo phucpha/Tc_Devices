@@ -1,16 +1,93 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_BurnerControlEcoFlamV3" Id="{40ab636a-b8a1-4bda-af1e-6b0c6d112d1d}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_BurnerControlEcoFlamV3 EXTENDS FB_BurnerControlEcoFlamV2 IMPLEMENTS I_BurnerControlEcoFlamV3
+    <Declaration><![CDATA[(* this fb for burner type that request off power and turn on again to reset it*)
+FUNCTION_BLOCK FB_BurnerControlEcoFlamV3 EXTENDS FB_BurnerControlEcoFlamV2 IMPLEMENTS I_BurnerControlEcoFlamV3
 VAR
 	poOnOff : FB_DigitalOutput;
 	poGasLv1 : FB_DigitalOutput;
 	poGasLv2 : FB_DigitalOutput;
+	eResetState : E_EcoFlamStateResetV3;
+	tonDelayOffPower : TON;
+	tonDelayOnPower : TON;
+	timeDelayOnOffPower : TIME := T#2S;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[SUPER^();]]></ST>
+      <ST><![CDATA[bError := piFault.In;
+piFireSussess();
+StateMachine();
+tonMeasurementTimer(PT := tMeasurement);
+IF piFireSussess.RisingTrigger AND eState=ECOFLAM_IGNITION THEN
+	tBurnSuccess	:= 	tonMeasurementTimer.ET;				
+END_IF
+
+tonReset(
+	in := (eState=ECOFLAM_RESET AND eResetState=ECOFLAM_V3_RESET_PORESET_ON),
+	PT := timeReset
+);
+poReset();
+poReset.Out := tonReset.IN;
+tonDelayOffPower(
+	IN := eState=ECOFLAM_RESET AND eresetstate=ECOFLAM_V3_RESET_TURN_OFF,
+	PT := timeDelayOnOffPower
+);
+tonDelayOnPower(
+	IN := eState=ECOFLAM_RESET AND eresetstate=ECOFLAM_V3_RESET_TURN_ON,
+	PT := timeDelayOnOffPower
+);]]></ST>
     </Implementation>
+    <Method Name="MS_Reset" Id="{68651d15-8acf-45b4-9d27-be04aeff67a5}">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Reset : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[piFireSussess.MR_Reset();
+bInit 		:= FALSE;
+bAbort		:= FALSE;
+bIgnition 	:= FALSE;
+bStop 		:= FALSE;
+
+CASE eResetState OF
+	ECOFLAM_V3_RESET_TURN_OFF:
+		CASE THIS^.eActivePowerType OF
+			ACTIVE_POWER_TYPE_NO_FEEDBACK:
+				ifActivePowerNoFB.MR_PowerOFF();
+				IF tonDelayOffPower.Q THEN
+					eResetState := ECOFLAM_V3_RESET_TURN_ON;
+				END_IF
+			ACTIVE_POWER_TYPE_FEEDBACK:
+				ifActivePower.MR_PowerOFF();
+				IF tonDelayOffPower.Q
+					AND NOT ifActivePower.Powered AND NOT ifActivePower.Busy
+				THEN
+					eResetState := ECOFLAM_V3_RESET_TURN_ON;
+				END_IF
+		END_CASE
+		
+	ECOFLAM_V3_RESET_TURN_ON:
+		CASE THIS^.eActivePowerType OF
+			ACTIVE_POWER_TYPE_NO_FEEDBACK:
+				ifActivePowerNoFB.MR_PowerON();
+				IF tonDelayOnPower.Q THEN
+					eResetState := ECOFLAM_V3_RESET_PORESET_ON;
+				END_IF
+			ACTIVE_POWER_TYPE_FEEDBACK:
+				ifActivePower.MR_PowerON();
+				IF (ifActivePower.Powered AND NOT ifActivePower.Busy)
+					AND tonDelayOnPower.Q
+				THEN
+					eResetState := ECOFLAM_V3_RESET_PORESET_ON;
+				END_IF
+		END_CASE
+		
+	ECOFLAM_V3_RESET_PORESET_ON:
+		IF tonReset.Q THEN
+			eState := ECOFLAM_RESET_DONE;
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="Ref_poGasLv1" Id="{4d9794b6-a63a-48e4-a338-0d5cc6f7d7a3}">
       <Declaration><![CDATA[PROPERTY Ref_poGasLv1 : REFERENCE TO FB_DigitalOutput]]></Declaration>
       <Get Name="Get" Id="{4082d1c2-5f6a-4c9f-858d-2b1e5100ee74}">
@@ -45,7 +122,52 @@ END_VAR
       </Get>
     </Property>
     <LineIds Name="FB_BurnerControlEcoFlamV3">
+      <LineId Id="26" Count="5" />
       <LineId Id="9" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="19" Count="5" />
+      <LineId Id="36" Count="3" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="50" Count="1" />
+      <LineId Id="49" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV3.MS_Reset">
+      <LineId Id="24" Count="4" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="60" Count="2" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="76" Count="1" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="74" Count="1" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="35" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlamV3.Ref_poGasLv1.Get">
       <LineId Id="2" Count="0" />

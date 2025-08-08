@@ -6,30 +6,34 @@
 FUNCTION_BLOCK FB_BurnerControlEcoFlamV2 EXTENDS FB_BurnerControlEcoFlam IMPLEMENTS I_BurnerControlEcoFlamV2
 VAR
 	poReset : FB_DigitalOutput;
+	tonReset : TON;
+	timeReset : TIME := T#1.5s;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[SUPER^();]]></ST>
+      <ST><![CDATA[tonReset(
+	in := eState=ECOFLAM_RESET,
+	PT := timeReset
+);
+poReset();
+poReset.Out := tonReset.IN;
+SUPER^();]]></ST>
     </Implementation>
     <Folder Name="Internal" Id="{bd4dc108-7c01-4c06-855a-5c2e03d60714}" />
     <Method Name="MS_Reset" Id="{1073984c-af6c-466e-a7a3-8ad219bb6330}" FolderPath="Internal\">
       <Declaration><![CDATA[METHOD PROTECTED MS_Reset : BOOL
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[poReset.Out := TRUE;
-SUPER^.MS_Reset();
-
-]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="MS_ResetDone" Id="{84372ba7-44d5-4c6d-a992-a36d0f299462}" FolderPath="Internal\">
-      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[poReset.Out := FALSE;
-SUPER^.MS_ResetDone();]]></ST>
+        <ST><![CDATA[piFireSussess.MR_Reset();
+bInit 		:= FALSE;
+bAbort		:= FALSE;
+bIgnition 	:= FALSE;
+bStop 		:= FALSE;
+IF NOT piFireSussess.ErrorTimedout// for sure least than TimeReset.
+	AND tonReset.Q
+THEN
+	eState := ECOFLAM_RESET_DONE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Property Name="Ref_poReset" Id="{19a4886f-ceaa-4baa-af92-8ae8e5948c09}">
@@ -44,16 +48,16 @@ END_VAR
       </Get>
     </Property>
     <LineIds Name="FB_BurnerControlEcoFlamV2">
+      <LineId Id="20" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="24" Count="1" />
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlamV2.MS_Reset">
-      <LineId Id="6" Count="0" />
-      <LineId Id="17" Count="1" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_BurnerControlEcoFlamV2.MS_ResetDone">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="24" Count="5" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="31" Count="2" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlamV2.Ref_poReset.Get">
       <LineId Id="2" Count="0" />

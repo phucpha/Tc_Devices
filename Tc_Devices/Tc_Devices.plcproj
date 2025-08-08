@@ -19,7 +19,7 @@
     <Company>NewEngineer</Company>
     <Released>false</Released>
     <Title>Tc_Devices</Title>
-    <ProjectVersion>1.3.2.1</ProjectVersion>
+    <ProjectVersion>1.3.3.1</ProjectVersion>
     <LibraryCategories>
       <LibraryCategory xmlns="">
         <Id>{34b615cd-45ba-4d29-985a-190ea3e88038}</Id>
@@ -40,6 +40,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\Burner\E_EcoFlamState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Burner\E_EcoFlamStateResetV3.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\Contactor\E_ContactorError.TcDUT">
