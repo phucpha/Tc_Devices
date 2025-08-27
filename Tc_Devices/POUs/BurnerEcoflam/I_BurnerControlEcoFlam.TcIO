@@ -11,8 +11,8 @@
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Property Name="error" Id="{0255438b-0e05-42b0-8cc7-e0f2d50e243c}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY error : REFERENCE to bool]]></Declaration>
+    <Property Name="Error" Id="{0255438b-0e05-42b0-8cc7-e0f2d50e243c}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Error : REFERENCE to bool]]></Declaration>
       <Get Name="Get" Id="{bb3361ff-ebd2-4c31-8067-57e789894748}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
@@ -23,8 +23,8 @@
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Property Name="isStop" Id="{531c4f2e-c9da-4b2e-82e9-578e0b17d64a}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY isStop : bool]]></Declaration>
+    <Property Name="IsStop" Id="{531c4f2e-c9da-4b2e-82e9-578e0b17d64a}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY IsStop : bool]]></Declaration>
       <Get Name="Get" Id="{ac4fe213-2025-43de-856b-afecf30ba0af}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
@@ -81,14 +81,14 @@ END_VAR
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Property Name="ref_piFault" Id="{e7964e33-d217-481e-a80e-bf21a43d33ed}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY ref_piFault : reference to  FB_DigitalInput]]></Declaration>
+    <Property Name="Ref_piFault" Id="{e7964e33-d217-481e-a80e-bf21a43d33ed}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Ref_piFault : reference to  FB_DigitalInput]]></Declaration>
       <Get Name="Get" Id="{4a62b2c5-3afa-4c41-91bb-971ab641f71f}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
-    <Property Name="ref_piIgnitionSucess" Id="{d5bdccdf-64f2-4ee6-819a-cac6a2f3016f}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY ref_piIgnitionSucess : reference to  FB_DigitalInput]]></Declaration>
+    <Property Name="Ref_piIgnitionSucess" Id="{d5bdccdf-64f2-4ee6-819a-cac6a2f3016f}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Ref_piIgnitionSucess : reference to  FB_DigitalInput]]></Declaration>
       <Get Name="Get" Id="{e21df271-7210-4163-b79f-1d5aae27e347}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>

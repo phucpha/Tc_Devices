@@ -399,14 +399,13 @@ END_IF
       </Implementation>
     </Method>
     <Method Name="MS_ResetDone" Id="{f943014d-068b-4845-bb11-9f41ba5be81e}" FolderPath="Internal\">
-      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
+      <Declaration><![CDATA[(* don't not edit*)
+METHOD PROTECTED MS_ResetDone
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT bReset THEN
-	eState := ECOFLAM_READY_INITIALIZED;
-END_IF]]></ST>
+        <ST><![CDATA[eState := ECOFLAM_READY_INITIALIZED;]]></ST>
       </Implementation>
     </Method>
     <Method Name="MS_Stop" Id="{0427a35e-52cf-4579-b5b6-38d6e9db201d}" FolderPath="Internal\">
@@ -721,8 +720,7 @@ END_CASE]]></ST>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MS_ResetDone">
-      <LineId Id="10" Count="1" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MS_Stop">
       <LineId Id="22" Count="0" />
