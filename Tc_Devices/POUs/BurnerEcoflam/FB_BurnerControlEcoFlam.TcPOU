@@ -85,6 +85,17 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Property Name="Inited" Id="{77fbaf7a-0a5e-49c6-8cfa-cac730d2a1e3}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Inited : bool]]></Declaration>
+      <Get Name="Get" Id="{e9c44e9b-d3d7-4315-bb12-fadae2e3dd49}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Inited := eState=ECOFLAM_READY_INITIALIZED;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="IsStop" Id="{f5f1fb6b-1e47-4c5e-b372-bbc55886a0c6}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY IsStop : bool]]></Declaration>
       <Get Name="Get" Id="{0981c464-f7c3-4ed6-9bbb-d69c78ebaff5}">
@@ -389,9 +400,7 @@ bInit 		:= FALSE;
 bAbort		:= FALSE;
 bIgnition 	:= FALSE;
 bStop 		:= FALSE;
-IF NOT bError
-	AND NOT	piFireSussess.ErrorTimedout
-THEN
+IF NOT piFireSussess.ErrorTimedout THEN
 	eState := ECOFLAM_RESET_DONE;
 END_IF
 
@@ -589,6 +598,9 @@ END_CASE]]></ST>
     <LineIds Name="FB_BurnerControlEcoFlam.IgnitionSucess.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.Inited.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.IsStop.Get">
       <LineId Id="5" Count="0" />
       <LineId Id="8" Count="0" />
@@ -716,7 +728,8 @@ END_CASE]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MS_Reset">
-      <LineId Id="8" Count="10" />
+      <LineId Id="8" Count="5" />
+      <LineId Id="16" Count="2" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MS_ResetDone">

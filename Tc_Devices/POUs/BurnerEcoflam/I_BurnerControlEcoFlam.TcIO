@@ -23,6 +23,12 @@
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
+    <Property Name="Inited" Id="{1bc4f88e-6bd9-4f2e-8d60-d7419ac93022}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Inited : bool]]></Declaration>
+      <Get Name="Get" Id="{ab1935a3-e98b-43f1-b8ac-8422aac0e262}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
     <Property Name="IsStop" Id="{531c4f2e-c9da-4b2e-82e9-578e0b17d64a}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY IsStop : bool]]></Declaration>
       <Get Name="Get" Id="{ac4fe213-2025-43de-856b-afecf30ba0af}">
