@@ -15,8 +15,14 @@ END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[IF IsRefActivePower THEN
-	poOnOff.Out := ifActivePower.PowerOnIsCalled OR ifActivePowerNoFB.PowerOnIsCalled;
-	poGasLv1.Out := ifActivePower.PowerOnIsCalled OR ifActivePowerNoFB.PowerOnIsCalled;
+	CASE ActivePowerType OF
+		ACTIVE_POWER_TYPE_FEEDBACK:
+			poOnOff.Out := ifActivePower.PowerOnIsCalled;
+			poGasLv1.Out := ifActivePower.PowerOnIsCalled;
+		ACTIVE_POWER_TYPE_NO_FEEDBACK:
+			poOnOff.Out := ifActivePowerNoFB.PowerOnIsCalled;
+			poGasLv1.Out := ifActivePowerNoFB.PowerOnIsCalled;
+	END_CASE
 END_IF
 bError := piFault.In;
 piFireSussess();
@@ -127,8 +133,14 @@ END_VAR
     </Property>
     <LineIds Name="FB_BurnerControlEcoFlamV3">
       <LineId Id="66" Count="0" />
-      <LineId Id="64" Count="0" />
-      <LineId Id="63" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="69" Count="0" />
       <LineId Id="67" Count="0" />
       <LineId Id="26" Count="5" />
       <LineId Id="9" Count="0" />
