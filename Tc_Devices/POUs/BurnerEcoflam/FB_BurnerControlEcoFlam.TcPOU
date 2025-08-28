@@ -96,6 +96,17 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Property Name="IsRefActivePower" Id="{a6ad5d9a-0822-4162-adc5-bcaef2e2d72c}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY IsRefActivePower : bool]]></Declaration>
+      <Get Name="Get" Id="{92ae821a-21ee-4325-ab66-71548c130800}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IsRefActivePower := ifActivePower<>0 OR ifActivePowerNoFB<>0;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="IsStop" Id="{f5f1fb6b-1e47-4c5e-b372-bbc55886a0c6}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY IsStop : bool]]></Declaration>
       <Get Name="Get" Id="{0981c464-f7c3-4ed6-9bbb-d69c78ebaff5}">
@@ -598,6 +609,9 @@ END_CASE]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.Inited.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlam.IsRefActivePower.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.IsStop.Get">
