@@ -18,3 +18,6 @@ Go to the [releases](https://github.com/phucpha/Tc_Devices/releases)
 Check the [open](https://github.com/phucpha/Tc_Devices/issues) and [closed](https://github.com/phucpha/Tc_Devices/issues?q=is%3Aissue%20state%3Aclosed) issues.
 If your issue does not already exist, create a [new](https://github.com/phucpha/Tc_Devices/issues/new).
 For general ideas/discussions, use the [discussions](https://github.com/phucpha/Tc_Devices/discussions).
+
+# Dependencies
+See DEPENDENCIES.md
