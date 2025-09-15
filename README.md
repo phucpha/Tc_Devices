@@ -6,7 +6,7 @@
 3. Any Responsibilities for anyone who use this library.
 4. The Documentation or the Manual.
 
-Please note the **library revision** in [TwinCAT 3 => TE1000 XAE => PLC => PLC programming conventions => Programming => Libraries => Library development](https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_plc_intro/12049843211.html&id=)
+Please note the [Revision control](https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_plc_intro/12049843211.html&id=) in TwinCAT 3 => TE1000 XAE => PLC => PLC programming conventions => Programming => Libraries => Library development.
 
 **How to install the library?**  
 Read [Beckhoff Infosys](https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_plc_intro/4218300427.html&id=)
