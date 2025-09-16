@@ -26,17 +26,7 @@ VAR
 	bStartWatchdog		: BOOL;
 	tonWatchdog			: TON;		(* Input timeout watchdog *)
 	
-END_VAR
-(*
-Version history:
-
-+-------------+------------+----------------+----------+------------------------------------------+
-|Date         | Version    | created under  | Author   | Remark                                   |
-+=============+============+================+==========+==========================================+
-|2022-03      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                   |
-+-------------+------------+----------------+----------+------------------------------------------+
-
-*)]]></Declaration>
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[bActive := eDigitalInputState >= DIGITAL_INPUT_EX_IDLE; //OR eDigitalInputState = DIGITAL_INPUT_EX_ABORTING;
 

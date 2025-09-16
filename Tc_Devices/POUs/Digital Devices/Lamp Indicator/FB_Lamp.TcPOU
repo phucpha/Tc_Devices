@@ -13,17 +13,7 @@ VAR
 	tonBlinkingTimer	: TON;					(*  *)
 	tBlinkTime			: TIME;					(*  *)
 	In: INT;
-END_VAR
-(*
-Version history:
-
-+-------------+------------+----------------+----------+------------------------------------------+
-|Date         | Version    | created under  | Author   | Remark                                   |
-+=============+============+================+==========+==========================================+
-|2021-11      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                   |
-+-------------+------------+----------------+----------+------------------------------------------+
-
-*)]]></Declaration>
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[IF bFirstCycle THEN
 	bFirstCycle := FALSE;

@@ -46,22 +46,7 @@ VAR
 
 	tMoveActive			: TIME;					(* Time of last movement to active postion *)
 	tMoveHome			: TIME;					(* Time of last movement to home position *)
-END_VAR
-(*
-Version history:
-
-+-------------+------------+----------------+----------+------------------------------------------------------------+
-|Date         | Version    | created under  | Author   | Remark                                                     |
-+=============+============+================+==========+============================================================+
-|2021-11      | 1.0.0.0    | V3.1.4024.22   | ADBO     | Function block created                                     |
-+-------------+------------+----------------+----------+------------------------------------------------------------+
-|2022-01      | 1.1.0.0    | V3.1.4024.22   | ADBO     | Function block changed into base for FB_SingleCoilCylinder |
-+-------------+------------+----------------+----------+------------------------------------------------------------+
-|2022-03      | 1.2.0.0    | V3.1.4024.22   | ADBO     | Changed FB_DigitalInput to FB_DigitalInputExt              |
-+-------------+------------+----------------+----------+------------------------------------------------------------+
-
-*)
-]]></Declaration>
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[(* Initial assignaments *)
 IF bFirstCycle THEN
