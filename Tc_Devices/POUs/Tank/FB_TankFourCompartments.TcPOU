@@ -96,6 +96,44 @@ fbTank4.Name := CONCAT(sName, ' part 4');
 fbTank4.WeightUnit := sWeightUnit;]]></ST>
       </Implementation>
     </Method>
+    <Property Name="LimitMaxWeight" Id="{b59d8be2-d633-4a6d-9c4c-27551b4f04e8}">
+      <Declaration><![CDATA[PROPERTY LimitMaxWeight : lreal]]></Declaration>
+      <Get Name="Get" Id="{01157412-39dd-4149-8eeb-406729f6f0aa}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LimitMaxWeight := lrLimitMaxWeight; ]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{f10dc189-f270-424e-bf74-0bf16c3fd33a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[lrLimitMaxWeight := LimitMaxWeight;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="LimitMinWeight" Id="{004677b0-17d6-48c1-832f-cf1a0ebf3f3a}">
+      <Declaration><![CDATA[PROPERTY LimitMinWeight : lreal]]></Declaration>
+      <Get Name="Get" Id="{19f9ff2c-3fc9-44dc-a6ff-1ffec7be245b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LimitMinWeight := lrLimitMinWeight;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{f5e73618-addc-4579-85da-2ba14a5c7f7a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[lrLimitMinWeight := LimitMinWeight;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Property Name="Name" Id="{14bcf70a-e2fd-4276-afc1-d57e39cdc948}">
       <Declaration><![CDATA[PROPERTY Name : String]]></Declaration>
       <Get Name="Get" Id="{bce301fd-0189-48a5-a654-040e4d1faee3}">
@@ -247,6 +285,18 @@ END_VAR
       <LineId Id="19" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="13" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TankFourCompartments.LimitMaxWeight.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TankFourCompartments.LimitMaxWeight.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TankFourCompartments.LimitMinWeight.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TankFourCompartments.LimitMinWeight.Set">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_TankFourCompartments.Name.Get">
       <LineId Id="2" Count="0" />

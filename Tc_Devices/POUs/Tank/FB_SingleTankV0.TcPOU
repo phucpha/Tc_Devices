@@ -8,6 +8,7 @@ FUNCTION_BLOCK FB_SingleTankV0 EXTENDS FB_SingleTank
 VAR
 	bAllowInMaterial : BOOL;
 	bAllowOutMaterial : BOOL;
+	lrWeightWithdraw : LREAL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -41,6 +42,25 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Property Name="WeightWithdraw" Id="{29fd68ca-7307-4b79-a062-bfa4580def3d}">
+      <Declaration><![CDATA[PROPERTY WeightWithdraw : lreal]]></Declaration>
+      <Get Name="Get" Id="{f4d324d7-bfd5-43b4-ba04-e024cc8f3469}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[WeightWithdraw := lrWeightWithdraw;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c577a9a8-e76c-427f-bdd9-14600dcf32e2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[lrWeightWithdraw := WeightWithdraw;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <LineIds Name="FB_SingleTankV0">
       <LineId Id="18" Count="0" />
       <LineId Id="20" Count="0" />
@@ -50,6 +70,12 @@ END_VAR
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankV0.AllowOut.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV0.WeightWithdraw.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV0.WeightWithdraw.Set">
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
