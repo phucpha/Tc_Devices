@@ -3,24 +3,26 @@
   <POU Name="POU" Id="{72876a34-3061-4895-8343-255626024a2e}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM POU
 VAR
-	FB_BurnerControlEcoFlam : FB_BurnerControlEcoFlam;
-	FB_BurnerControlEcoFlamV2 : FB_BurnerControlEcoFlamV2;
-	FB_BurnerControlEcoFlamV3 : FB_BurnerControlEcoFlamV3;
-	FB_ContactorFBNO : FB_ContactorFBNO;
-	fb_contactorNonFB : FB_ContactorNonFB;
-	FB_Contactor1FB_ThermalRelay : FB_Contactor1FB_ThermalRelay;
-	FB_ContactorNonFB_ThermalRelay : FB_ContactorNonFB_ThermalRelay;
-	FB_ContactorNonFB_Flex_ThermalRelay : FB_ContactorNonFB_Flex_ThermalRelay;
-	FB_SingleCoilCylinder : FB_SingleCoilCylinder;
-	FB_DoubleCoilCylinder : FB_DoubleCoilCylinder;
-	fbsingletank : FB_SingleTank;
-	fbsingletankV0 : FB_SingleTankV0;
-	fbsingletankV1 : FB_SingleTankV1;
-	fbTankFourCompartments : FB_TankFourCompartments;
+//	FB_BurnerControlEcoFlam : FB_BurnerControlEcoFlam;
+//	FB_BurnerControlEcoFlamV2 : FB_BurnerControlEcoFlamV2;
+//	FB_BurnerControlEcoFlamV3 : FB_BurnerControlEcoFlamV3;
+//	FB_ContactorFBNO : FB_ContactorFBNO;
+//	fb_contactorNonFB : FB_ContactorNonFB;
+//	FB_Contactor1FB_ThermalRelay : FB_Contactor1FB_ThermalRelay;
+//	FB_ContactorNonFB_ThermalRelay : FB_ContactorNonFB_ThermalRelay;
+//	FB_ContactorNonFB_Flex_ThermalRelay : FB_ContactorNonFB_Flex_ThermalRelay;
+//	FB_SingleCoilCylinder : FB_SingleCoilCylinder;
+//	FB_DoubleCoilCylinder : FB_DoubleCoilCylinder;
+//	fbsingletank : FB_SingleTank;
+//	fbsingletankV0 : FB_SingleTankV0;
+//	fbsingletankV1 : FB_SingleTankV1;
+//	fbTankFourCompartments : FB_TankFourCompartments;
+	fbSingleTankV1 : FB_SingleTankV1;
+	fbFillTank : FB_TankFill_2Cylinder;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[fbSingleTankV1.AssignIfill(iFill := fbFillTank);]]></ST>
     </Implementation>
     <LineIds Name="POU">
       <LineId Id="5" Count="0" />

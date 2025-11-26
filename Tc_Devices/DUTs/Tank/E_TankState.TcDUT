@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_TankState" Id="{625f87ac-beaf-43c0-b351-9d294cfb9376}">
+    <Declaration><![CDATA[TYPE E_TankState :
+(
+	TANK_STOP := 0,
+	TANK_WITHDRAWING := 10,
+	TANK_FILLING:= 20
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -7,6 +7,7 @@ VAR
 	sWeightUnit : STRING := 'Kg'; // Kg
 	piLslow : FB_DigitalInput;
 	piLsHigh : FB_DigitalInput;
+	poCylinderCoil : FB_DigitalOutput;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -53,6 +54,17 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Property Name="Ref_poCylinderCoil" Id="{e609a428-6ab3-40cb-a686-885573c121fa}">
+      <Declaration><![CDATA[PROPERTY Ref_poCylinderCoil : REFERENCE TO FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{4ac1a50a-33c2-4df0-bdef-7dc65bbb0f72}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_poCylinderCoil ref= poCylinderCoil;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="WeightUnit" Id="{77dbb17f-7210-4007-b0ad-d8ccfe7a3644}">
       <Declaration><![CDATA[PROPERTY WeightUnit : string]]></Declaration>
       <Get Name="Get" Id="{238a38ad-a707-4a80-8507-4f57900189f0}">
@@ -85,6 +97,9 @@ END_VAR
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTank.Ref_piLsLow.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTank.Ref_poCylinderCoil.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTank.WeightUnit.Get">

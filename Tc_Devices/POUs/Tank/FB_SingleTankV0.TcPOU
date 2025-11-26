@@ -8,12 +8,24 @@ FUNCTION_BLOCK FB_SingleTankV0 EXTENDS FB_SingleTank
 VAR
 	bAllowInMaterial : BOOL;
 	bAllowOutMaterial : BOOL;
-	lrWeightWithdraw : LREAL;
+	tonRemainOffLsLow	: TON;
+	tRemainOffLsLow	: TIME := T#1S;
+	tonRemainLsHigh	: TON;
+	tRemainLsHigh	: TIME := T#1S;	
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[bAllowInMaterial := NOT piLsHigh.In;
-bAllowOutMaterial := piLslow.In;
+      <ST><![CDATA[tonRemainOffLsLow(
+	IN := NOT piLslow.In,
+	PT := tRemainOffLsLow,
+);
+bAllowOutMaterial := NOT tonRemainOffLsLow.Q;
+
+tonRemainLsHigh(
+	IN := piLsHigh.In,
+	PT := tRemainLsHigh,
+);
+bAllowInMaterial := NOT tonRemainLsHigh.Q;
 SUPER^();]]></ST>
     </Implementation>
     <Property Name="AllowIn" Id="{fc712f05-a064-4a5a-96e7-72aaec14e8cf}">
@@ -42,28 +54,53 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
-    <Property Name="WeightWithdraw" Id="{29fd68ca-7307-4b79-a062-bfa4580def3d}">
-      <Declaration><![CDATA[PROPERTY WeightWithdraw : lreal]]></Declaration>
-      <Get Name="Get" Id="{f4d324d7-bfd5-43b4-ba04-e024cc8f3469}">
+    <Property Name="TimeRemainLsHigh" Id="{d11668c1-4f5e-40de-b8e3-d91045ad5ba3}">
+      <Declaration><![CDATA[PROPERTY TimeRemainLsHigh : Time]]></Declaration>
+      <Get Name="Get" Id="{b2101392-74b9-4f15-b14e-856ba87f9441}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[WeightWithdraw := lrWeightWithdraw;]]></ST>
+          <ST><![CDATA[TimeRemainLsHigh := tRemainLsHigh;]]></ST>
         </Implementation>
       </Get>
-      <Set Name="Set" Id="{c577a9a8-e76c-427f-bdd9-14600dcf32e2}">
+      <Set Name="Set" Id="{a8dcedc0-952b-4dfd-8752-ce18e8877301}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[lrWeightWithdraw := WeightWithdraw;]]></ST>
+          <ST><![CDATA[tRemainLsHigh := TimeRemainLsHigh;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="TimeRemainOffLsLow" Id="{64cb247d-190a-47c7-ad90-c3b9b3de1b1f}">
+      <Declaration><![CDATA[PROPERTY TimeRemainOffLsLow : Time]]></Declaration>
+      <Get Name="Get" Id="{90f07dfc-6052-4ae2-979f-1e568ca273d6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[TimeRemainOffLsLow := tRemainOffLsLow;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{b31d19b4-b14d-4e81-81c5-713e73b41b0c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[tRemainOffLsLow := TimeRemainOffLsLow;]]></ST>
         </Implementation>
       </Set>
     </Property>
     <LineIds Name="FB_SingleTankV0">
-      <LineId Id="18" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="35" Count="2" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="52" Count="0" />
       <LineId Id="20" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="56" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankV0.AllowIn.Get">
@@ -72,10 +109,16 @@ END_VAR
     <LineIds Name="FB_SingleTankV0.AllowOut.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="FB_SingleTankV0.WeightWithdraw.Get">
+    <LineIds Name="FB_SingleTankV0.TimeRemainLsHigh.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="FB_SingleTankV0.WeightWithdraw.Set">
+    <LineIds Name="FB_SingleTankV0.TimeRemainLsHigh.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV0.TimeRemainOffLsLow.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV0.TimeRemainOffLsLow.Set">
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

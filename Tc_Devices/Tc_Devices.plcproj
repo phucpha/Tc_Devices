@@ -19,7 +19,7 @@
     <Company>NewEngineer</Company>
     <Released>false</Released>
     <Title>Tc_Devices</Title>
-    <ProjectVersion>1.5.2.0</ProjectVersion>
+    <ProjectVersion>2.0.0.0</ProjectVersion>
     <LibraryCategories>
       <LibraryCategory xmlns="">
         <Id>{34b615cd-45ba-4d29-985a-190ea3e88038}</Id>
@@ -67,6 +67,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\Digital Devices\Lamp Indicator\E_LampState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\Tank\E_TankState.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\Visu\Burner\E_VisuCtrlBurnerState.TcDUT">
@@ -182,14 +185,12 @@
     </Compile>
     <Compile Include="POUs\POU.TcPOU">
       <SubType>Code</SubType>
+      <ExcludeFromBuild>false</ExcludeFromBuild>
     </Compile>
     <Compile Include="POUs\Tank\FB_SingleTank.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Tank\FB_SingleTankV0.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\Tank\FB_SingleTankV01.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Tank\FB_SingleTankV1.TcPOU">
@@ -198,7 +199,10 @@
     <Compile Include="POUs\Tank\FB_TankFourCompartments.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Visualization Manager.TcVMO">
+    <Compile Include="POUs\Tank\Fill\FB_TankFill_2Cylinder.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\Tank\Fill\I_TankFill.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="VISUs\Image Pools\IPCylinder.TcIPO">
@@ -257,6 +261,7 @@
     <Folder Include="DUTs\Digital Devices" />
     <Folder Include="DUTs\Digital Devices\Digital Input" />
     <Folder Include="DUTs\Digital Devices\Lamp Indicator" />
+    <Folder Include="DUTs\Tank" />
     <Folder Include="DUTs\Visu" />
     <Folder Include="DUTs\Visu\Burner" />
     <Folder Include="DUTs\Visu\Cylinder" />
@@ -277,6 +282,7 @@
     <Folder Include="POUs\Digital Devices\Lamp Indicator" />
     <Folder Include="POUs\ActivePower" />
     <Folder Include="POUs\Tank" />
+    <Folder Include="POUs\Tank\Fill" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
     <Folder Include="VISUs\Image Pools" />
@@ -353,6 +359,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="POUs\Tank\Readme.txt">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="VISUs\Images\Cylinders\DoubleCoilCylinder.svg">
       <SubType>Content</SubType>
     </Content>

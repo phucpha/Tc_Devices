@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_TankFill_2Cylinder" Id="{e8944d61-9ce1-41f9-874d-840296d361ce}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TankFill_2Cylinder IMPLEMENTS I_TankFill
+VAR
+	poCylinder1 : FB_DigitalOutput;
+	poCylinder2 : FB_DigitalOutput;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[poCylinder1();
+poCylinder2();]]></ST>
+    </Implementation>
+    <Method Name="Close" Id="{afd8bf84-8924-40d9-9ece-bcd22d73ad2b}">
+      <Declaration><![CDATA[METHOD Close : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCylinder1.Out := FALSE;
+poCylinder2.Out := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Open" Id="{bdd526e2-4452-4c08-a6cf-31733794465b}">
+      <Declaration><![CDATA[METHOD Open : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCylinder1.Out := TRUE;
+poCylinder2.Out := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Ref_poCylinder1" Id="{a5b7aee3-8e80-4a76-95be-4212e4e33b4f}">
+      <Declaration><![CDATA[PROPERTY Ref_poCylinder1 : Reference to FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{b2ed88a1-6839-4a02-bcc9-c62bc55f3227}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_poCylinder1 ref= poCylinder1;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_poCylinder2" Id="{ff372483-ae3c-4298-a684-803846f48b11}">
+      <Declaration><![CDATA[PROPERTY Ref_poCylinder2 : Reference to FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{33410d3b-27b2-4809-a684-c7784cb9bc0b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_poCylinder2 ref= poCylinder2;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_TankFill_2Cylinder">
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TankFill_2Cylinder.Close">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_TankFill_2Cylinder.Open">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_TankFill_2Cylinder.Ref_poCylinder1.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TankFill_2Cylinder.Ref_poCylinder2.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_TankFill" Id="{0e48e970-fee3-4f32-8378-3931954799d0}">
+    <Declaration><![CDATA[INTERFACE I_TankFill
+]]></Declaration>
+    <Method Name="Close" Id="{6fb8ca09-7b6a-4324-9a9a-9e4d83106e22}">
+      <Declaration><![CDATA[METHOD Close : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Open" Id="{b28b4c71-5590-4f2d-8489-25b460fb5848}">
+      <Declaration><![CDATA[METHOD Open : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

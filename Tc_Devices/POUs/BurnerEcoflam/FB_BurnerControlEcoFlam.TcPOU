@@ -396,7 +396,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[;]]></ST>
+        <ST><![CDATA[bBusy := false;]]></ST>
       </Implementation>
     </Method>
     <Method Name="MS_Reset" Id="{ce905759-3b28-40ed-a33c-aa295b63c877}" FolderPath="Internal\">

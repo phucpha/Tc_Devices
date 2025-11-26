@@ -10,20 +10,52 @@ VAR
 	bAllowOutMaterial : BOOL;
 	lrLimitMinWeight : LREAL;
 	lrLimitMaxWeight : LREAL;
-	lrWeightWithdraw : LREAL; 		// weight withdraw Request 
-	bEnoughWithdraw : BOOL;
+	lrWeightWithdraw : LREAL; 		// weight withdraw Request
+	lrWeightBeforeWD : LREAL;
+	lrWeightWithdrawN : LREAL;
 	lrWeight : LREAL;
+	eState : E_TankState;
+	iFill : I_TankFill;				// the components that action for fill materials.
+	
+	tonRemainOffLsLow	: TON;
+	tRemainOffLsLow	: TIME := T#1S;
+	tonRemainLsHigh	: TON;
+	tRemainLsHigh	: TIME := T#1S;	
+	rTrigExecute : R_TRIG;
+	bExecute : BOOL;//Execute with draw
+	bFillError : BOOL;
+	bError : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[bAllowInMaterial := lrWeight < lrLimitMaxWeight
-						AND NOT piLsHigh.In;
-						
-bAllowOutMaterial := lrWeight > lrLimitMinWeight
-						AND piLslow.In;
-bEnoughWithdraw := lrWeight > (lrWeightWithdraw + lrLimitMinWeight);
-SUPER^();]]></ST>
+      <ST><![CDATA[SUPER^();
+rTrigExecute(CLK := bExecute);
+tonRemainOffLsLow(
+	IN := NOT piLslow.In,
+	PT := tRemainOffLsLow,
+);
+bAllowOutMaterial := (lrWeight > lrLimitMinWeight) AND NOT tonRemainOffLsLow.Q;
+
+tonRemainLsHigh(
+	IN := piLsHigh.In,
+	PT := tRemainLsHigh,
+);
+bAllowInMaterial := (lrWeight < lrLimitMaxWeight) AND NOT tonRemainLsHigh.Q;
+lrWeightWithdrawN := lrWeight-lrWeightBeforeWD;
+
+CASE eState OF
+	TANK_STOP:
+		MS_Stop();
+		
+	TANK_WITHDRAWING:
+		MS_Withdraw();
+		
+	TANK_FILLING:
+		MS_Filling();
+END_CASE]]></ST>
     </Implementation>
+    <Folder Name="MR" Id="{5cf67c81-8cb5-4f7d-a783-6c3d30fd5008}" />
+    <Folder Name="MS" Id="{2d673f0c-5114-41d5-a648-da7c237cd1a2}" />
     <Property Name="AllowIn" Id="{a5d1e9f2-1d23-4794-9392-8644ad8ab554}">
       <Declaration><![CDATA[PROPERTY AllowIn : Reference to bool]]></Declaration>
       <Get Name="Get" Id="{4611aad3-ae04-417a-8e61-b72d52a0c4c9}">
@@ -50,17 +82,24 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
-    <Property Name="EnoughWithdraw" Id="{14d668ef-cb0c-48e5-a28f-b4a763b749af}">
-      <Declaration><![CDATA[(*
-|Check enough weight to withdraw
-*)
-PROPERTY EnoughWithdraw : reference to bool]]></Declaration>
-      <Get Name="Get" Id="{72331470-823e-4389-a30c-fc5d641e0da2}">
+    <Method Name="AssignIfill" Id="{6bd1ecf2-a801-4d2d-a49e-ce6e70f9edd8}" FolderPath="MR\">
+      <Declaration><![CDATA[METHOD AssignIfill : BOOL
+VAR_INPUT
+	iFill : I_TankFill;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.iFill := iFill;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Error" Id="{7ebab51c-a90a-4640-837f-1a05932ddb35}">
+      <Declaration><![CDATA[PROPERTY Error : reference to Bool]]></Declaration>
+      <Get Name="Get" Id="{04299d28-0ce0-4d65-86b4-b62485ed6af6}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[EnoughWithdraw ref= bEnoughWithdraw;]]></ST>
+          <ST><![CDATA[Error ref= bError;]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -102,6 +141,141 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Method Name="MR_Filling" Id="{675faff3-e06e-4478-bd66-fbd908bf06d7}" FolderPath="MR\">
+      <Declaration><![CDATA[METHOD MR_Filling : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState=TANK_STOP 
+	AND bAllowInMaterial
+THEN
+	eState := TANK_FILLING;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Reset" Id="{b15a0cc9-b577-4d24-ac34-0685a159acfb}" FolderPath="MR\">
+      <Declaration><![CDATA[METHOD MR_Reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bError := FALSE;
+MR_Reset := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_Stop" Id="{82b4db85-f8ed-4c20-8ca1-01f5e4e6426c}" FolderPath="MR\">
+      <Declaration><![CDATA[METHOD MR_Stop : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[eState := TANK_STOP;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MR_WithDraw" Id="{dedc9575-8cb4-4654-8401-576c6fa3352b}" FolderPath="MR\">
+      <Declaration><![CDATA[(*	if withdrawing => still withdraw
+	else
+		if not stop => MR_Stop before withdraw
+*)
+METHOD MR_WithDraw : BOOL
+VAR_INPUT
+	lrWeightWd : LREAL;
+	bExecute : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.bExecute := bExecute;
+IF rTrigExecute.Q
+	AND eState=TANK_STOP 
+	AND lrWeight > (lrWeightWd + lrLimitMinWeight) // Check enough weight
+	AND bAllowOutMaterial
+THEN
+	eState := TANK_WITHDRAWING;
+	lrWeightWithdraw := lrWeightWd;
+	lrWeightBeforeWD := lrWeight;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Filling" Id="{30f1ee8e-2a2f-403a-a94d-62ab4c64a6dc}" FolderPath="MS\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Filling
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bAllowInMaterial THEN
+	iFill.Open();
+ELSE
+	iFill.Close();
+	bError := TRUE;
+	eState := TANK_STOP;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Stop" Id="{b8da31e7-b431-43cd-8de9-5758288609be}" FolderPath="MS\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Stop
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCylinderCoil.Out := FALSE;
+iFill.Close();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_Withdraw" Id="{338a2e54-065d-4b01-b9af-c195bfc8ff21}" FolderPath="MS\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Withdraw
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCylinderCoil.Out := TRUE;
+IF lrWeightWithdrawN > lrWeightWithdraw THEN
+	eState := TANK_STOP;
+END_IF
+IF NOT bAllowOutMaterial THEN
+	bError := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="TimeRemainLsHigh" Id="{eb2e0d34-edab-404c-a659-63569a9bd607}">
+      <Declaration><![CDATA[PROPERTY TimeRemainLsHigh : Time]]></Declaration>
+      <Get Name="Get" Id="{3cf94d45-a8a4-4ec1-a749-debac5b7f43a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[TimeRemainLsHigh := tRemainLsHigh;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{abdff600-b92b-41a5-a64c-0ecd0d1bbda3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[tRemainLsHigh := TimeRemainLsHigh;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="TimeRemainOffLsLow" Id="{75350e51-91e4-4d30-b49a-1e01a3efea97}">
+      <Declaration><![CDATA[PROPERTY TimeRemainOffLsLow : Time]]></Declaration>
+      <Get Name="Get" Id="{6f6ae728-e329-4428-8e6d-c8884c7fc6c6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[TimeRemainOffLsLow := tRemainOffLsLow;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{0303e9e2-62c1-483d-af66-6d00db2542aa}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[tRemainOffLsLow := TimeRemainOffLsLow;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Property Name="Weight" Id="{48882b1a-1508-4301-adb8-c089b6bbba6d}">
       <Declaration><![CDATA[PROPERTY Weight : lreal]]></Declaration>
       <Get Name="Get" Id="{362c66b8-ca90-4246-a487-4309fe64b699}">
@@ -112,13 +286,13 @@ END_VAR
           <ST><![CDATA[Weight := lrWeight;]]></ST>
         </Implementation>
       </Get>
-      <Set Name="Set" Id="{67a10c51-fa14-474d-96ee-72217c924e34}">
+      <Set Name="Set" Id="{0ff9306f-3504-4a30-a76d-50375bef0eef}">
         <Declaration><![CDATA[
 VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[lrWeight := Weight;]]></ST>
+          <ST><![CDATA[Weight := lrWeight;]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -142,12 +316,13 @@ END_VAR
       </Set>
     </Property>
     <LineIds Name="FB_SingleTankV1">
-      <LineId Id="30" Count="0" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="38" Count="0" />
-      <LineId Id="36" Count="1" />
-      <LineId Id="58" Count="0" />
-      <LineId Id="72" Count="0" />
+      <LineId Id="178" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="179" Count="10" />
+      <LineId Id="191" Count="0" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="192" Count="8" />
+      <LineId Id="122" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankV1.AllowIn.Get">
       <LineId Id="2" Count="0" />
@@ -155,7 +330,10 @@ END_VAR
     <LineIds Name="FB_SingleTankV1.AllowOut.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="FB_SingleTankV1.EnoughWithdraw.Get">
+    <LineIds Name="FB_SingleTankV1.AssignIfill">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.Error.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankV1.LimitMaxWeight.Get">
@@ -168,6 +346,56 @@ END_VAR
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankV1.LimitMinWeight.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.MR_Filling">
+      <LineId Id="6" Count="0" />
+      <LineId Id="9" Count="2" />
+      <LineId Id="14" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.MR_Reset">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.MR_Stop">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.MR_WithDraw">
+      <LineId Id="22" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="24" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.MS_Filling">
+      <LineId Id="5" Count="1" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.MS_Stop">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.MS_Withdraw">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="5" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.TimeRemainLsHigh.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.TimeRemainLsHigh.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.TimeRemainOffLsLow.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.TimeRemainOffLsLow.Set">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankV1.Weight.Get">
