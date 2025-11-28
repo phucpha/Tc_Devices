@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_Mixer0" Id="{b1c4791e-c423-4619-9a92-2d2afdb9cda8}" SpecialFunc="None">
+    <Declaration><![CDATA[(*The tank with opened lid and have a motor for mix, a cylinder for out material*)
+FUNCTION_BLOCK FB_Mixer0
+VAR
+	poCylinderOut : FB_DigitalOutput;
+	fbMotorContactor : FB_Contactor1FB_ThermalRelay;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Mix" Id="{e2e02bd9-8fb2-45f0-be31-bd0235cd3989}">
+      <Declaration><![CDATA[METHOD Mix : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[fbMotorContactor.MR_PowerON();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="OutMaterial" Id="{c138c301-8efe-490a-9d86-15f8b54562bc}">
+      <Declaration><![CDATA[METHOD OutMaterial : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCylinderOut.Out := true;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Ref_MotorContactor" Id="{e9105539-f80b-4827-bb89-f29a8633092f}">
+      <Declaration><![CDATA[PROPERTY Ref_MotorContactor : REFERENCE TO FB_Contactor1FB_ThermalRelay]]></Declaration>
+      <Get Name="Get" Id="{2dac6ecd-d27a-429c-b68e-50886cc6dcdb}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_MotorContactor ref= fbMotorContactor;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Ref_poCylinderOut" Id="{29861518-d4a7-4854-bd11-6e5ce0c53288}">
+      <Declaration><![CDATA[PROPERTY Ref_poCylinderOut : reference to FB_DigitalOutput]]></Declaration>
+      <Get Name="Get" Id="{827340e2-8f12-4736-9a21-bc71d3cf7333}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_poCylinderOut ref= poCylinderOut;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="StopAll" Id="{3d740fe2-2c16-4acd-9e3f-243afaded1b8}">
+      <Declaration><![CDATA[METHOD StopAll : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[StopMix();
+StopOutMaterial();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StopMix" Id="{9d2b99c9-8201-447e-b61d-8a3a7b0c6f0d}">
+      <Declaration><![CDATA[METHOD StopMix : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[fbMotorContactor.MR_PowerOFF();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StopOutMaterial" Id="{c1ac88a0-2c74-404a-ba44-65f7eaee8d4e}">
+      <Declaration><![CDATA[METHOD StopOutMaterial : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCylinderOut.Out := false;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Mixer0">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mixer0.Mix">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mixer0.OutMaterial">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mixer0.Ref_MotorContactor.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mixer0.Ref_poCylinderOut.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mixer0.StopAll">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_Mixer0.StopMix">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Mixer0.StopOutMaterial">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
