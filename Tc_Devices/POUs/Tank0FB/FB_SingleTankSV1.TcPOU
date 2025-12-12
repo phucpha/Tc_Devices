@@ -21,6 +21,7 @@ VAR
 	bExecute : BOOL;//Execute with draw
 	bFillError : BOOL;
 	bError : BOOL;
+	bWithDrawDone : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -31,6 +32,8 @@ bAllowInMaterial := (lrWeight < lrLimitMaxWeight);
 lrWeightWithdrawN := lrWeight-lrWeightBeforeWD;
 
 CASE eState OF
+	TANK_IDLE:
+		;// WAIT FOR CMD
 	TANK_STOP:
 		MS_Stop();
 		
@@ -134,7 +137,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF eState=TANK_STOP 
+        <ST><![CDATA[IF eState=TANK_IDLE 
 	AND bAllowInMaterial
 THEN
 	eState := TANK_FILLING;
@@ -148,6 +151,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[bError := FALSE;
+bWithDrawDone := FALSE;
 MR_Reset := TRUE;]]></ST>
       </Implementation>
     </Method>
@@ -174,13 +178,15 @@ END_VAR
       <Implementation>
         <ST><![CDATA[THIS^.bExecute := bExecute;
 IF rTrigExecute.Q
-	AND eState=TANK_STOP 
+	AND eState=TANK_IDLE 
 	AND lrWeight > (lrWeightWd + lrLimitMinWeight) // Check enough weight
 	AND bAllowOutMaterial
 THEN
 	eState := TANK_WITHDRAWING;
 	lrWeightWithdraw := lrWeightWd;
 	lrWeightBeforeWD := lrWeight;
+ELSE
+	bWithDrawDone := FALSE;
 END_IF
 ]]></ST>
       </Implementation>
@@ -207,7 +213,8 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[poCylinderCoil.Out := FALSE;
-iFill.Close();]]></ST>
+iFill.Close();
+eState := TANK_IDLE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="MS_Withdraw" Id="{41ff54f8-9253-4da0-92c5-796eae7ab45c}" FolderPath="MS\">
@@ -219,12 +226,24 @@ END_VAR
         <ST><![CDATA[poCylinderCoil.Out := TRUE;
 IF lrWeightWithdrawN > lrWeightWithdraw THEN
 	eState := TANK_STOP;
+	bWithDrawDone := TRUE;
 END_IF
 IF NOT bAllowOutMaterial THEN
 	bError := TRUE;
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Ref_iFill" Id="{66f955d5-689a-4852-9b7e-e73d5da1c17f}">
+      <Declaration><![CDATA[PROPERTY Ref_iFill : Reference to I_TankFill]]></Declaration>
+      <Get Name="Get" Id="{425613c7-921f-4233-bfb0-0dc564f7c0db}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_iFill ref= iFill;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="Weight" Id="{f9694997-df9d-4ef4-9fd1-d3c2a375fd1c}">
       <Declaration><![CDATA[PROPERTY Weight : lreal]]></Declaration>
       <Get Name="Get" Id="{30b20208-6668-4802-acb5-9a350e95c5df}">
@@ -264,6 +283,17 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Property Name="WithDrawDone" Id="{f8ac55f8-5350-4862-802b-c9681f46fd61}">
+      <Declaration><![CDATA[PROPERTY WithDrawDone : Bool]]></Declaration>
+      <Get Name="Get" Id="{9b1551cd-8c19-4e9e-abd4-31415942af21}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <LineIds Name="FB_SingleTankSV1">
       <LineId Id="178" Count="0" />
       <LineId Id="208" Count="0" />
@@ -271,7 +301,9 @@ END_VAR
       <LineId Id="189" Count="0" />
       <LineId Id="191" Count="0" />
       <LineId Id="207" Count="0" />
-      <LineId Id="192" Count="8" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="230" Count="1" />
+      <LineId Id="193" Count="7" />
       <LineId Id="122" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.AllowIn.Get">
@@ -304,7 +336,9 @@ END_VAR
       <LineId Id="14" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.MR_Reset">
-      <LineId Id="5" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="6" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.MR_Stop">
       <LineId Id="5" Count="0" />
@@ -319,6 +353,7 @@ END_VAR
       <LineId Id="5" Count="0" />
       <LineId Id="20" Count="0" />
       <LineId Id="19" Count="0" />
+      <LineId Id="35" Count="1" />
       <LineId Id="11" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>
@@ -331,10 +366,16 @@ END_VAR
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.MS_Stop">
       <LineId Id="5" Count="1" />
+      <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.MS_Withdraw">
       <LineId Id="5" Count="0" />
-      <LineId Id="7" Count="5" />
+      <LineId Id="7" Count="1" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="9" Count="3" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1.Ref_iFill.Get">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.Weight.Get">
       <LineId Id="2" Count="0" />
@@ -346,6 +387,9 @@ END_VAR
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.WeightWithdraw.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1.WithDrawDone.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

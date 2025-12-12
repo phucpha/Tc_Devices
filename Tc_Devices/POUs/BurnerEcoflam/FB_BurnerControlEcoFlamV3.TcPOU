@@ -47,6 +47,16 @@ tonDelayOnPower(
 	PT := timeDelayOnOffPower
 );]]></ST>
     </Implementation>
+    <Method Name="MS_Aborting" Id="{9ffa11ae-f174-4b02-a427-3b46217ea8c0}">
+      <Declaration><![CDATA[METHOD PROTECTED MS_Aborting
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[SUPER^.MS_Aborting();
+eResetState := ECOFLAM_V3_RESET_TURN_OFF;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="MS_Reset" Id="{68651d15-8acf-45b4-9d27-be04aeff67a5}">
       <Declaration><![CDATA[METHOD PROTECTED MS_Reset : BOOL
 ]]></Declaration>
@@ -96,6 +106,16 @@ CASE eResetState OF
 		END_IF
 END_CASE
 ]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_ResetDone" Id="{ed21c178-5293-4e51-a4fd-a92879738ada}">
+      <Declaration><![CDATA[METHOD PROTECTED MS_ResetDone
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[SUPER^.MS_ResetDone();
+eResetState := ECOFLAM_V3_RESET_TURN_OFF;]]></ST>
       </Implementation>
     </Method>
     <Property Name="Ref_poGasLv1" Id="{4d9794b6-a63a-48e4-a338-0d5cc6f7d7a3}">
@@ -151,6 +171,9 @@ END_VAR
       <LineId Id="50" Count="1" />
       <LineId Id="49" Count="0" />
     </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV3.MS_Aborting">
+      <LineId Id="5" Count="1" />
+    </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlamV3.MS_Reset">
       <LineId Id="24" Count="4" />
       <LineId Id="33" Count="0" />
@@ -188,6 +211,9 @@ END_VAR
       <LineId Id="45" Count="0" />
       <LineId Id="40" Count="0" />
       <LineId Id="35" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BurnerControlEcoFlamV3.MS_ResetDone">
+      <LineId Id="5" Count="1" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlamV3.Ref_poGasLv1.Get">
       <LineId Id="2" Count="0" />

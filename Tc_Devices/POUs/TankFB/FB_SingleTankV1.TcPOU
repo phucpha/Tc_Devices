@@ -238,6 +238,17 @@ IF NOT bAllowOutMaterial THEN
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Ref_iFill" Id="{9193596e-f9cc-4b22-9838-6c0491645916}">
+      <Declaration><![CDATA[PROPERTY Ref_iFill : Reference to I_TankFill]]></Declaration>
+      <Get Name="Get" Id="{e077462b-c292-408d-952a-dff23d38697a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Ref_iFill ref= iFill;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="TimeRemainLsHigh" Id="{eb2e0d34-edab-404c-a659-63569a9bd607}">
       <Declaration><![CDATA[PROPERTY TimeRemainLsHigh : Time]]></Declaration>
       <Get Name="Get" Id="{3cf94d45-a8a4-4ec1-a749-debac5b7f43a}">
@@ -385,6 +396,9 @@ END_VAR
     <LineIds Name="FB_SingleTankV1.MS_Withdraw">
       <LineId Id="5" Count="0" />
       <LineId Id="7" Count="5" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankV1.Ref_iFill.Get">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankV1.TimeRemainLsHigh.Get">
       <LineId Id="2" Count="0" />

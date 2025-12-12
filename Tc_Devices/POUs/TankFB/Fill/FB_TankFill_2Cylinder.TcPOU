@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_TankFill_2Cylinder" Id="{e8944d61-9ce1-41f9-874d-840296d361ce}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_TankFill_2Cylinder IMPLEMENTS I_TankFill
+    <Declaration><![CDATA[(*P&ID: 2 cylinder but Actual design 1 cylinder1*)
+FUNCTION_BLOCK FB_TankFill_2Cylinder IMPLEMENTS I_TankFill
 VAR
 	poCylinder1 : FB_DigitalOutput;
 	poCylinder2 : FB_DigitalOutput;
@@ -21,6 +22,28 @@ END_VAR
 poCylinder2.Out := FALSE;]]></ST>
       </Implementation>
     </Method>
+    <Property Name="IsClose" Id="{b2b0c821-38ac-4afd-9f9c-9e4c85d09fb8}">
+      <Declaration><![CDATA[PROPERTY IsClose : bool]]></Declaration>
+      <Get Name="Get" Id="{90616937-43c3-4663-abf8-b01c76fe1d28}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IsClose := poCylinder1.Out=false;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="IsOpen" Id="{f2fd2810-e07e-42b2-853a-ddd42eab6f36}">
+      <Declaration><![CDATA[PROPERTY IsOpen : bool]]></Declaration>
+      <Get Name="Get" Id="{647f5201-07e6-4ee0-90b4-f5d3816af186}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IsOpen := poCylinder1.Out=True;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="Open" Id="{bdd526e2-4452-4c08-a6cf-31733794465b}">
       <Declaration><![CDATA[METHOD Open : BOOL
 VAR_INPUT
@@ -59,6 +82,12 @@ END_VAR
     </LineIds>
     <LineIds Name="FB_TankFill_2Cylinder.Close">
       <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_TankFill_2Cylinder.IsClose.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TankFill_2Cylinder.IsOpen.Get">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_TankFill_2Cylinder.Open">
       <LineId Id="5" Count="1" />

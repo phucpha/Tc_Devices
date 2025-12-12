@@ -9,6 +9,18 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
+    <Property Name="IsClose" Id="{17b38770-f8d0-46e2-b56a-ce5e295c4401}">
+      <Declaration><![CDATA[PROPERTY IsClose : bool]]></Declaration>
+      <Get Name="Get" Id="{21ad2a2d-918d-4451-9142-497d571761a3}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="IsOpen" Id="{15d05cd5-24af-441e-a9c5-4a6db77c2c5b}">
+      <Declaration><![CDATA[PROPERTY IsOpen : bool]]></Declaration>
+      <Get Name="Get" Id="{2e4102c4-8500-4871-a7a5-aa77cadc09e3}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
     <Method Name="Open" Id="{b28b4c71-5590-4f2d-8489-25b460fb5848}">
       <Declaration><![CDATA[METHOD Open : BOOL
 VAR_INPUT

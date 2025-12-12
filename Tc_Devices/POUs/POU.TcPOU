@@ -20,13 +20,16 @@ VAR
 //	fbSingleTankV1 : FB_SingleTanksV1;
 //	fbFillTank : FB_TankFill_2Cylinder;
 //	fbMixer0 : FB_Mixer0;
+ 	bIsClose : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[//fbSingleTankV1.AssignIfill(iFill := fbFillTank);]]></ST>
+      <ST><![CDATA[//fbSingleTankV1.AssignIfill(iFill := fbFillTank);
+//bIsClose := fbsingletankV1.Ref_iFill.IsClose;]]></ST>
     </Implementation>
     <LineIds Name="POU">
       <LineId Id="5" Count="0" />
+      <LineId Id="27" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

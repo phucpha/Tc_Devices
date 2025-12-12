@@ -1,50 +1,9 @@
 <?xml version="1.0"?>
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56" ClassName="CNestedPlcProjDef">
 	<Project GUID="{BA4532CC-976D-4A00-93C4-933DE8777AE4}" Name="Tc_Devices" PrjFilePath="..\..\Tc_Devices\Tc_Devices.plcproj" TmcFilePath="..\..\Tc_Devices\Tc_Devices.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Tc_Devices\Tc_Devices.tmc" TmcHash="{83A13418-86BD-16A2-7304-B1509B74FADA}">
+		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Tc_Devices\Tc_Devices.tmc" TmcHash="{400F9198-B20E-6F10-5BCF-829C92C4294F}">
 			<Name>Tc_Devices Instance</Name>
 			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
-			<Vars VarGrpType="1">
-				<Name>PlcTask Inputs</Name>
-				<Var>
-					<Name>POU.fbMixer0.fbMotorContactor.piFR.bIn</Name>
-					<Comment><![CDATA[ Current value of input ]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.fbMixer0.fbMotorContactor.piNO.bIn</Name>
-					<Comment><![CDATA[ Current value of input ]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-			</Vars>
-			<Vars VarGrpType="2" AreaNo="1">
-				<Name>PlcTask Outputs</Name>
-				<Var>
-					<Name>POU.fbSingleTankV1.poCylinderCoil.bOut</Name>
-					<Comment><![CDATA[ Current value of output]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.fbFillTank.poCylinder1.bOut</Name>
-					<Comment><![CDATA[ Current value of output]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.fbFillTank.poCylinder2.bOut</Name>
-					<Comment><![CDATA[ Current value of output]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.fbMixer0.poCylinderOut.bOut</Name>
-					<Comment><![CDATA[ Current value of output]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-				<Var>
-					<Name>POU.fbMixer0.fbMotorContactor.poCoil.bOut</Name>
-					<Comment><![CDATA[ Current value of output]]></Comment>
-					<Type>BOOL</Type>
-				</Var>
-			</Vars>
 			<Contexts>
 				<Context>
 					<Id>0</Id>
