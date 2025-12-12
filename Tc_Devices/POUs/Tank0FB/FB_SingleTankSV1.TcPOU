@@ -29,7 +29,7 @@ END_VAR
 rTrigExecute(CLK := bExecute);
 bAllowOutMaterial := (lrWeight > lrLimitMinWeight);
 bAllowInMaterial := (lrWeight < lrLimitMaxWeight);
-lrWeightWithdrawN := lrWeight-lrWeightBeforeWD;
+lrWeightWithdrawN := lrWeightBeforeWD-lrWeight;
 
 CASE eState OF
 	TANK_IDLE:

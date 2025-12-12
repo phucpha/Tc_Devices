@@ -41,7 +41,7 @@ tonRemainLsHigh(
 	PT := tRemainLsHigh,
 );
 bAllowInMaterial := (lrWeight < lrLimitMaxWeight) AND NOT tonRemainLsHigh.Q;
-lrWeightWithdrawN := lrWeight-lrWeightBeforeWD;
+lrWeightWithdrawN := lrWeightBeforeWD-lrWeight;
 
 CASE eState OF
 	TANK_STOP:
