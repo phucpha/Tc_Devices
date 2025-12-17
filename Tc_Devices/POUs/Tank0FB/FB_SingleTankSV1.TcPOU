@@ -22,6 +22,8 @@ VAR
 	bFillError : BOOL;
 	bError : BOOL;
 	bWithDrawDone : BOOL;
+	tonWithDrawStable : TON;
+	tTimeWithDrawStable : TIME := T#3s; 
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -30,7 +32,7 @@ rTrigExecute(CLK := bExecute);
 bAllowOutMaterial := (lrWeight > lrLimitMinWeight);
 bAllowInMaterial := (lrWeight < lrLimitMaxWeight);
 lrWeightWithdrawN := lrWeightBeforeWD-lrWeight;
-
+tonWithDrawStable(IN := eState=TANK_STOP, PT := tTimeWithDrawStable);
 CASE eState OF
 	TANK_IDLE:
 		;// WAIT FOR CMD
@@ -165,7 +167,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="MR_WithDraw" Id="{f46ebad8-bf4f-4fbd-bf93-7bd1b26757c7}" FolderPath="MR\">
-      <Declaration><![CDATA[(*	if withdrawing => still withdraw
+      <Declaration><![CDATA[(*	
+	please call bExecute := false and then call bExecute := true for begin withdraw 
+	if withdrawing => still withdraw
 	else
 		if not stop => MR_Stop before withdraw
 *)
@@ -185,10 +189,10 @@ THEN
 	eState := TANK_WITHDRAWING;
 	lrWeightWithdraw := lrWeightWd;
 	lrWeightBeforeWD := lrWeight;
-ELSE
-	bWithDrawDone := FALSE;
 END_IF
-]]></ST>
+IF bExecute= FALSE THEN
+	bWithDrawDone := FALSE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="MS_Filling" Id="{bc9ac396-e513-4815-9e54-20b33958e075}" FolderPath="MS\">
@@ -214,7 +218,10 @@ END_VAR
       <Implementation>
         <ST><![CDATA[poCylinderCoil.Out := FALSE;
 iFill.Close();
-eState := TANK_IDLE;]]></ST>
+//bExecute := FALSE; // dont open this comment because it wrong.
+IF tonWithDrawStable.Q THEN
+	eState := TANK_IDLE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="MS_Withdraw" Id="{41ff54f8-9253-4da0-92c5-796eae7ab45c}" FolderPath="MS\">
@@ -243,6 +250,25 @@ END_VAR
           <ST><![CDATA[Ref_iFill ref= iFill;]]></ST>
         </Implementation>
       </Get>
+    </Property>
+    <Property Name="TimeWithDrawStable" Id="{fa79fd41-9f83-4c2c-9fec-2a2619a43c3e}">
+      <Declaration><![CDATA[PROPERTY TimeWithDrawStable : Time]]></Declaration>
+      <Get Name="Get" Id="{73e5f184-89ca-4f11-9d90-56474f2014d4}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[TimeWithDrawStable := tTimeWithDrawStable;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{119b3c97-119d-4472-922e-d187a18c7be6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[tTimeWithDrawStable := TimeWithDrawStable;]]></ST>
+        </Implementation>
+      </Set>
     </Property>
     <Property Name="Weight" Id="{f9694997-df9d-4ef4-9fd1-d3c2a375fd1c}">
       <Declaration><![CDATA[PROPERTY Weight : lreal]]></Declaration>
@@ -283,6 +309,17 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Property Name="WeightWithDrawN" Id="{705638db-f5aa-4651-8a66-8e4b22227b34}">
+      <Declaration><![CDATA[PROPERTY WeightWithDrawN : lreal]]></Declaration>
+      <Get Name="Get" Id="{64a9aead-8c94-43a6-9a35-c2a6730978ea}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[WeightWithDrawN := lrWeightWithdrawN;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="WithDrawDone" Id="{f8ac55f8-5350-4862-802b-c9681f46fd61}">
       <Declaration><![CDATA[PROPERTY WithDrawDone : Bool]]></Declaration>
       <Get Name="Get" Id="{9b1551cd-8c19-4e9e-abd4-31415942af21}">
@@ -290,7 +327,7 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[]]></ST>
+          <ST><![CDATA[WithDrawDone := bWithDrawDone;]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -353,9 +390,10 @@ END_VAR
       <LineId Id="5" Count="0" />
       <LineId Id="20" Count="0" />
       <LineId Id="19" Count="0" />
-      <LineId Id="35" Count="1" />
       <LineId Id="11" Count="0" />
       <LineId Id="24" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="49" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.MS_Filling">
       <LineId Id="5" Count="1" />
@@ -366,7 +404,10 @@ END_VAR
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.MS_Stop">
       <LineId Id="5" Count="1" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="14" Count="0" />
       <LineId Id="10" Count="0" />
+      <LineId Id="15" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.MS_Withdraw">
       <LineId Id="5" Count="0" />
@@ -375,6 +416,12 @@ END_VAR
       <LineId Id="9" Count="3" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.Ref_iFill.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1.TimeWithDrawStable.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1.TimeWithDrawStable.Set">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.Weight.Get">
@@ -387,6 +434,9 @@ END_VAR
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.WeightWithdraw.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1.WeightWithDrawN.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.WithDrawDone.Get">

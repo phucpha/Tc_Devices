@@ -213,18 +213,35 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF eState =  ECOFLAM_READY_INITIALIZED AND NOT piFireSussess.In THEN
- 	bIgnition	:= TRUE;
-	MR_Ignition := FALSE;
-	bIgnitioned	:= FALSE;
-	eState := ECOFLAM_IGNITION;
-	bBusy := TRUE;
-ELSIF eState = ECOFLAM_IGNITION_DONE THEN
-	bIgnition := FALSE;
-	bIgnitioned	:= TRUE;
-	MR_Ignition := TRUE;
-	bBusy := false	;
-END_IF]]></ST>
+        <ST><![CDATA[CASE eActivePowerType OF
+	ACTIVE_POWER_TYPE_NO_FEEDBACK:
+		IF eState = ECOFLAM_READY_INITIALIZED AND NOT ifActivePowerNoFB.PowerOnIsCalled THEN
+			bIgnition	:= TRUE;
+			MR_Ignition := FALSE;
+			bIgnitioned	:= FALSE;
+			eState := ECOFLAM_IGNITION;
+			bBusy := TRUE;
+		ELSIF eState = ECOFLAM_IGNITION_DONE THEN
+			bIgnition := FALSE;
+			bIgnitioned	:= TRUE;
+			MR_Ignition := TRUE;
+			bBusy := false	;
+		END_IF
+		
+	ACTIVE_POWER_TYPE_FEEDBACK:
+		IF eState = ECOFLAM_READY_INITIALIZED AND NOT ifActivePower.PowerOnIsCalled THEN
+			bIgnition	:= TRUE;
+			MR_Ignition := FALSE;
+			bIgnitioned	:= FALSE;
+			eState := ECOFLAM_IGNITION;
+			bBusy := TRUE;
+		ELSIF eState = ECOFLAM_IGNITION_DONE THEN
+			bIgnition := FALSE;
+			bIgnitioned	:= TRUE;
+			MR_Ignition := TRUE;
+			bBusy := false	;
+		END_IF
+END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="MR_Init" Id="{b73be3d0-0d4d-418a-928d-8354a1d399c2}" FolderPath="Request\">
@@ -658,15 +675,14 @@ END_CASE]]></ST>
       <LineId Id="33" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MR_Ignition">
-      <LineId Id="5" Count="2" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="14" Count="0" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="8" Count="1" />
-      <LineId Id="13" Count="0" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="19" Count="0" />
-      <LineId Id="11" Count="0" />
+      <LineId Id="23" Count="1" />
+      <LineId Id="28" Count="10" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="40" Count="10" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="25" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.MR_Init">
       <LineId Id="5" Count="0" />
