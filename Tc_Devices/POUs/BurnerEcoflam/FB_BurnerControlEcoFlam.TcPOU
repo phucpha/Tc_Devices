@@ -81,7 +81,13 @@ PROPERTY IgnitionSucess : bool]]></Declaration>
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[IgnitionSucess := piFireSussess.In;]]></ST>
+          <ST><![CDATA[CASE eActivePowerType OF
+	ACTIVE_POWER_TYPE_NO_FEEDBACK:
+		IgnitionSucess := piFireSussess.In AND ifActivePowerNoFB.PowerOnIsCalled;
+		
+	ACTIVE_POWER_TYPE_FEEDBACK:
+		IgnitionSucess := piFireSussess.In AND ifActivePower.PowerOnIsCalled;
+END_CASE]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -623,7 +629,10 @@ END_CASE]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.IgnitionSucess.Get">
-      <LineId Id="2" Count="0" />
+      <LineId Id="6" Count="1" />
+      <LineId Id="19" Count="2" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_BurnerControlEcoFlam.Inited.Get">
       <LineId Id="2" Count="0" />
