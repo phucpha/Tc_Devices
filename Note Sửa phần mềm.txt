@@ -1,0 +1,2 @@
+Tc_devices: FB_SingleTankSV1 lỗi khi withdraw như sau, khi rút cà => tới state withdraw =>withdraw xong thì báo withdrawDone =>và chuyển tới State stop. 
+ở state stop (tank chờ ổn định 3s) => trong lúc này nêú ra lệnh rút cà thì nó sẽ ko vào step withdraw nữa và tưởng sẽ là bị treo.

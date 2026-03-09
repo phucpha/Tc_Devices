@@ -5,11 +5,12 @@
 FUNCTION_BLOCK FB_Mixer0
 VAR
 	poCylinderOut : FB_DigitalOutput;
-	fbMotorContactor : FB_Contactor1FB_ThermalRelay;
+	fbMotorContactor : FB_ContactorNonFB_ThermalRelay;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[poCylinderOut();
+fbMotorContactor();]]></ST>
     </Implementation>
     <Method Name="Mix" Id="{e2e02bd9-8fb2-45f0-be31-bd0235cd3989}">
       <Declaration><![CDATA[METHOD Mix : BOOL
@@ -30,7 +31,7 @@ END_VAR
       </Implementation>
     </Method>
     <Property Name="Ref_MotorContactor" Id="{e9105539-f80b-4827-bb89-f29a8633092f}">
-      <Declaration><![CDATA[PROPERTY Ref_MotorContactor : REFERENCE TO FB_Contactor1FB_ThermalRelay]]></Declaration>
+      <Declaration><![CDATA[PROPERTY Ref_MotorContactor : REFERENCE TO FB_ContactorNonFB_ThermalRelay]]></Declaration>
       <Get Name="Get" Id="{2dac6ecd-d27a-429c-b68e-50886cc6dcdb}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -81,6 +82,7 @@ END_VAR
     </Method>
     <LineIds Name="FB_Mixer0">
       <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="0" />
     </LineIds>
     <LineIds Name="FB_Mixer0.Mix">
       <LineId Id="5" Count="0" />

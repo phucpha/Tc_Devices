@@ -23,7 +23,8 @@ VAR
 	bError : BOOL;
 	bWithDrawDone : BOOL;
 	tonWithDrawStable : TON;
-	tTimeWithDrawStable : TIME := T#3s; 
+	tTimeWithDrawStable : TIME := T#3S;
+	bEnoughWithdraw : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -32,7 +33,7 @@ rTrigExecute(CLK := bExecute);
 bAllowOutMaterial := (lrWeight > lrLimitMinWeight);
 bAllowInMaterial := (lrWeight < lrLimitMaxWeight);
 lrWeightWithdrawN := lrWeightBeforeWD-lrWeight;
-tonWithDrawStable(IN := eState=TANK_STOP, PT := tTimeWithDrawStable);
+tonWithDrawStable(IN := eState=TANK_WITHDRAWING_DONE, PT := tTimeWithDrawStable);
 CASE eState OF
 	TANK_IDLE:
 		;// WAIT FOR CMD
@@ -41,6 +42,9 @@ CASE eState OF
 		
 	TANK_WITHDRAWING:
 		MS_Withdraw();
+		
+	TANK_WITHDRAWING_DONE:
+		Ms_WithDrawDone();
 		
 	TANK_FILLING:
 		MS_Filling();
@@ -82,6 +86,21 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[THIS^.iFill := iFill;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckEnoughWithDraw" Id="{60b52222-e52a-4884-8d70-2cdebc4eec33}">
+      <Declaration><![CDATA[METHOD CheckEnoughWithDraw : BOOL
+VAR_INPUT
+	lrWeightWd : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF 	lrWeight > (lrWeightWd + lrLimitMinWeight) THEN
+	bEnoughWithdraw := TRUE;
+ELSE
+	bEnoughWithdraw := FALSE;
+END_IF
+CheckEnoughWithDraw := bEnoughWithdraw;]]></ST>
       </Implementation>
     </Method>
     <Property Name="Error" Id="{7eb57e0c-d744-4ad7-b259-9cd03a95cd68}">
@@ -218,10 +237,8 @@ END_VAR
       <Implementation>
         <ST><![CDATA[poCylinderCoil.Out := FALSE;
 iFill.Close();
-//bExecute := FALSE; // dont open this comment because it wrong.
-IF tonWithDrawStable.Q THEN
-	eState := TANK_IDLE;
-END_IF]]></ST>
+bExecute := FALSE;
+eState := TANK_IDLE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="MS_Withdraw" Id="{41ff54f8-9253-4da0-92c5-796eae7ab45c}" FolderPath="MS\">
@@ -232,12 +249,25 @@ END_VAR
       <Implementation>
         <ST><![CDATA[poCylinderCoil.Out := TRUE;
 IF lrWeightWithdrawN > lrWeightWithdraw THEN
-	eState := TANK_STOP;
-	bWithDrawDone := TRUE;
+	eState := TANK_WITHDRAWING_DONE;
 END_IF
 IF NOT bAllowOutMaterial THEN
 	bError := TRUE;
 END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MS_WithDrawDone" Id="{1bd2695f-6573-4648-aa96-780582f621a5}" FolderPath="MS\">
+      <Declaration><![CDATA[METHOD PROTECTED MS_WithDrawDone : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[poCylinderCoil.Out := FALSE;
+IF tonWithDrawStable.Q THEN
+	bWithDrawDone := TRUE;
+	eState := TANK_IDLE;
+END_IF
+]]></ST>
       </Implementation>
     </Method>
     <Property Name="Ref_iFill" Id="{66f955d5-689a-4852-9b7e-e73d5da1c17f}">
@@ -340,7 +370,12 @@ END_VAR
       <LineId Id="207" Count="0" />
       <LineId Id="192" Count="0" />
       <LineId Id="230" Count="1" />
-      <LineId Id="193" Count="7" />
+      <LineId Id="193" Count="4" />
+      <LineId Id="258" Count="0" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="257" Count="0" />
+      <LineId Id="259" Count="0" />
+      <LineId Id="199" Count="1" />
       <LineId Id="122" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.AllowIn.Get">
@@ -351,6 +386,11 @@ END_VAR
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.AssignIfill">
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1.CheckEnoughWithDraw">
+      <LineId Id="7" Count="3" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.Error.Get">
       <LineId Id="2" Count="0" />
@@ -405,15 +445,18 @@ END_VAR
     <LineIds Name="FB_SingleTankSV1.MS_Stop">
       <LineId Id="5" Count="1" />
       <LineId Id="19" Count="0" />
-      <LineId Id="14" Count="0" />
       <LineId Id="10" Count="0" />
-      <LineId Id="15" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.MS_Withdraw">
       <LineId Id="5" Count="0" />
-      <LineId Id="7" Count="1" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="9" Count="3" />
+      <LineId Id="7" Count="5" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1.MS_WithDrawDone">
+      <LineId Id="10" Count="0" />
+      <LineId Id="6" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_SingleTankSV1.Ref_iFill.Get">
       <LineId Id="2" Count="0" />

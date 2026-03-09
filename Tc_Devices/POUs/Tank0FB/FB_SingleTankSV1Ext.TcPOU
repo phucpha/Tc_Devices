@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_SingleTankSV1Ext" Id="{bb81fd6c-115b-43ef-86f2-3e70850eaa40}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SingleTankSV1Ext EXTENDS FB_SingleTankSV1
+VAR
+	sNameTask : STRING;
+	bBusyTask : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[SUPER^();]]></ST>
+    </Implementation>
+    <Property Name="BusyTask" Id="{5f01a18e-053c-4c41-b9ca-6269647a9d05}">
+      <Declaration><![CDATA[PROPERTY BusyTask : BOOL]]></Declaration>
+      <Get Name="Get" Id="{9ddb7b43-f3c9-4b96-a236-c8af6c9b47dc}">
+        <Declaration><![CDATA[
+VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[BusyTask := bBusyTask;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="RegisterTask" Id="{b2b1d959-671e-4ae2-84ea-d47fee3ebd97}">
+      <Declaration><![CDATA[METHOD RegisterTask : BOOL
+VAR_INPUT
+	sTask : STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bBusyTask THEN
+	sNameTask := sTask;
+	bBusyTask := true;
+	RegisterTask := TRUE;
+ELSE
+	RegisterTask := FALSE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="TaskRegistered" Id="{61920fe3-7ea6-407c-8170-b26e9f608c7b}">
+      <Declaration><![CDATA[PROPERTY TaskRegistered : string]]></Declaration>
+      <Get Name="Get" Id="{c1d10f15-aa36-451e-a62e-0ee8dc217b47}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[TaskRegistered := sNameTask;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="UnRegisterTask" Id="{1e29d8d5-b2d1-4f66-8dea-ddba1177c4a3}">
+      <Declaration><![CDATA[METHOD UnRegisterTask : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bBusyTask := FALSE;
+sNameTask := '';
+UnRegisterTask := true;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_SingleTankSV1Ext">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1Ext.BusyTask.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1Ext.RegisterTask">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="9" Count="2" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1Ext.TaskRegistered.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_SingleTankSV1Ext.UnRegisterTask">
+      <LineId Id="5" Count="2" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

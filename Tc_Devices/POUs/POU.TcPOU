@@ -20,7 +20,7 @@ VAR
 //	fbSingleTankV1 : FB_SingleTanksV1;
 //	fbFillTank : FB_TankFill_2Cylinder;
 //	fbMixer0 : FB_Mixer0;
- 	bIsClose : BOOL;
+ 	//bIsClose : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
